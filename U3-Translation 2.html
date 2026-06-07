@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Translation Skill Challenge · Level 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #f5f0e7 0%, #e8dfd1 100%);
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            margin: 0;
+        }
+        .challenge-container {
+            width: 100%;
+            max-width: 850px;
+            background: rgba(255, 252, 247, 0.9);
+            backdrop-filter: blur(18px);
+            background: #fffef9;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(120, 80, 50, 0.1);
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(180, 150, 120, 0.15);
+            position: relative;
+        }
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(230, 215, 190, 0.7);
+            border: none;
+            color: #4a3a2c;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .back-btn:hover {
+            background: rgba(210, 190, 160, 0.9);
+        }
+        h1 {
+            font-weight: 500;
+            font-size: 2rem;
+            letter-spacing: -0.3px;
+            color: #4a3a2c;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.2rem;
+            margin-left: 4.5rem;
+        }
+        h1 span {
+            background: #c9b18b;
+            color: #2e2416;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.2rem 1rem;
+            border-radius: 2rem;
+        }
+        .subtitle {
+            color: #7b6e5e;
+            font-style: italic;
+            margin-bottom: 2rem;
+            border-left: 4px solid #c8af87;
+            padding-left: 1.2rem;
+            font-size: 1.1rem;
+            background: rgba(220, 200, 170, 0.15);
+            border-radius: 0 8px 8px 0;
+            margin-left: 4.5rem;
+        }
+        .progress-section {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            background: #f7f3ea;
+            padding: 0.8rem 1.2rem;
+            border-radius: 3rem;
+        }
+        .progress-track {
+            flex: 1;
+            height: 10px;
+            background: #e3d7c5;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #b39264;
+            border-radius: 20px;
+            transition: width 0.35s ease;
+        }
+        .step-indicator {
+            font-weight: 600;
+            color: #5f4c34;
+            font-size: 0.9rem;
+        }
+        .original-sentence {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 1.3rem;
+            background: #faf7f1;
+            padding: 1.4rem;
+            border-radius: 1.2rem;
+            color: #3b3122;
+            text-align: center;
+            border: 1px dashed #d4bc92;
+            margin-bottom: 1.8rem;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+        .question-block {
+            display: none;
+        }
+        .question-block.active {
+            display: block;
+        }
+        .question-title {
+            font-weight: 600;
+            font-size: 1.15rem;
+            color: #4e3e2b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .question-title i {
+            background: #ede3d2;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-style: normal;
+            font-weight: 700;
+            color: #7b5f40;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1.2rem 0;
+        }
+        .option {
+            background: #fefcf8;
+            border: 1.5px solid #e1cfb5;
+            border-radius: 2rem;
+            padding: 0.9rem 1.3rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 0.98rem;
+            color: #3d3224;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .option:hover {
+            background: #f8f1e4;
+            border-color: #b39264;
+        }
+        .option.selected {
+            background: #e7d9c4;
+            border-color: #9b7b56;
+            font-weight: 500;
+        }
+        .option.correct-highlight {
+            background: #dcedcf;
+            border-color: #6d8c4a;
+            color: #2d4018;
+        }
+        .option.wrong-flash {
+            background: #f8e2e2;
+            border-color: #bc5e5e;
+        }
+        .ordering-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.7rem;
+            margin: 1.2rem 0;
+            background: #fcf9f4;
+            padding: 1.2rem;
+            border-radius: 1.2rem;
+        }
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .order-item span {
+            font-weight: 600;
+            color: #5f4c34;
+            width: 2rem;
+        }
+        .order-item select {
+            padding: 0.5rem 1.8rem 0.5rem 0.8rem;
+            border-radius: 2rem;
+            border: 1px solid #cfbc9c;
+            background: white;
+            font-size: 0.9rem;
+            color: #3d3224;
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%239b7b56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            flex: 1;
+        }
+        .feedback-message {
+            font-size: 0.9rem;
+            margin-top: 0.6rem;
+            font-weight: 500;
+            min-height: 1.8rem;
+        }
+        .btn {
+            background: #b39264;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.8rem 2rem;
+            border-radius: 3rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            box-shadow: 0 4px 10px rgba(140, 100, 60, 0.2);
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            background: #cbb295;
+        }
+        .success-panel {
+            text-align: center;
+            padding: 2rem;
+            background: #f4f0e7;
+            border-radius: 1.8rem;
+            display: none;
+        }
+        .success-panel h3 {
+            font-size: 2rem;
+            color: #4a5e2c;
+        }
+        .footer-note {
+            color: #9b8b78;
+            font-size: 0.8rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .challenge-container {
+                padding: 1.8rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="challenge-container">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>
+        📖 Translation Quest
+        <span>Level 2</span>
+    </h1>
+    <div class="subtitle">
+        "Parallel structure & ellipsis — from analysis to natural Chinese"
+    </div>
+
+    <div class="progress-section">
+        <span class="step-indicator" id="stepText">Step 0 / 4</span>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <div class="original-sentence">
+        We worry about winning, our honor, our pride, our integrity, our desire to be heard, our need to be right, who recognizes us, whether we are achieving enough, whether we are rich enough, good looking, well-dressed, influential.
+    </div>
+
+    <div id="questionsContainer">
+        <!-- Q1: count parallel objects -->
+        <div class="question-block active" id="q1">
+            <div class="question-title"><i>1</i> Parallel objects count · 并列宾语数量</div>
+            <p>How many parallel objects follow "worry about"? (including restored ellipsis / 含省略还原)</p>
+            <div class="options" id="q1Options">
+                <div class="option" data-value="9">A. 9</div>
+                <div class="option" data-value="10">B. 10</div>
+                <div class="option" data-value="12">C. 12</div>
+                <div class="option" data-value="13">D. 13</div>
+            </div>
+            <div class="feedback-message" id="q1Feedback"></div>
+            <button class="btn" id="q1Submit" disabled>Confirm</button>
+        </div>
+
+        <!-- Q2: ellipsis restoration -->
+        <div class="question-block" id="q2">
+            <div class="question-title"><i>2</i> Ellipsis restoration · 省略还原</div>
+            <p>The phrase "good looking, well-dressed, influential" correctly restores to:</p>
+            <div class="options" id="q2Options">
+                <div class="option" data-value="B">B. whether we are good looking, whether we are well-dressed, whether we are influential</div>
+                <div class="option" data-value="C">C. that we are good looking, well-dressed and influential</div>
+                <div class="option" data-value="D">D. whether good looking, well-dressed or influential</div>
+            </div>
+            <div class="feedback-message" id="q2Feedback"></div>
+            <button class="btn" id="q2Submit" disabled>Check</button>
+        </div>
+
+        <!-- Q3: key phrase translation -->
+        <div class="question-block" id="q3">
+            <div class="question-title"><i>3</i> Key phrase translation · 关键短语翻译</div>
+            <p>Choose the <strong>most accurate</strong> Chinese translation for each phrase in the context of the optimal version. (每题选择最准确的一项)</p>
+            
+            <div style="margin-bottom:1.5rem;">
+                <p style="font-weight:600;">1. "our need to be right"</p>
+                <div class="options" id="q3aOptions">
+                    <div class="option" data-value="A">A. 我们的需求是正确的</div>
+                    <div class="option" data-value="B">B. 执着于证明自己正确</div>
+                    <div class="option" data-value="C">C. 我们需要正确</div>
+                    <div class="option" data-value="D">D. 证明自己是正确的需要</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1.5rem;">
+                <p style="font-weight:600;">2. "who recognizes us"</p>
+                <div class="options" id="q3bOptions">
+                    <div class="option" data-value="A">A. 谁认识我们</div>
+                    <div class="option" data-value="B">B. 谁认可我们</div>
+                    <div class="option" data-value="C">C. 在意他人是否认可自己</div>
+                    <div class="option" data-value="D">D. 谁承认我们</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1.5rem;">
+                <p style="font-weight:600;">3. "our integrity"</p>
+                <div class="options" id="q3cOptions">
+                    <div class="option" data-value="A">A. 担忧我们是否完整</div>
+                    <div class="option" data-value="B">B. 操心我们的正直</div>
+                    <div class="option" data-value="C">C. 担忧我们的诚实</div>
+                    <div class="option" data-value="D">D. 纠结是否守住操守</div>
+                </div>
+            </div>
+
+            <div class="feedback-message" id="q3Feedback"></div>
+            <button class="btn" id="q3Submit" disabled>Submit all answers</button>
+        </div>
+
+        <!-- Q4: ordering translation (shuffled dropdown options) -->
+        <div class="question-block" id="q4">
+            <div class="question-title"><i>4</i> Build the Chinese parallel sentence · 排比排序</div>
+            <p>Arrange the fragments in the correct order to form a coherent translation. (将下列片段按正确顺序排列)</p>
+            <div class="ordering-grid" id="orderingGrid"></div>
+            <div class="feedback-message" id="q4Feedback"></div>
+            <button class="btn" id="q4Submit">Check order</button>
+        </div>
+    </div>
+
+    <div class="success-panel" id="successPanel">
+        <h3>🎉 Level Complete!</h3>
+        <p style="font-size:1.2rem; margin:1rem 0;">You've mastered parallel structure, ellipsis,<br>and how to craft natural Chinese parallelism.</p>
+        <p style="color:#5f4c34;">Excellent work!</p>
+    </div>
+    <div class="footer-note">Translation Skill Builder · Level 2</div>
+</div>
+
+<script>
+    (function() {
+        const totalSteps = 4;
+        let completedSteps = new Array(totalSteps).fill(false);
+
+        const questionBlocks = [
+            document.getElementById('q1'),
+            document.getElementById('q2'),
+            document.getElementById('q3'),
+            document.getElementById('q4')
+        ];
+        const stepText = document.getElementById('stepText');
+        const progressFill = document.getElementById('progressFill');
+        const successPanel = document.getElementById('successPanel');
+        const questionsContainer = document.getElementById('questionsContainer');
+
+        // 通用选项绑定函数
+        function bindOptionClick(optionElement, callback) {
+            const handler = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                callback();
+            };
+            optionElement.addEventListener('click', handler);
+            optionElement.addEventListener('touchend', handler);
+        }
+
+        // 数组随机打乱函数
+        function shuffleArray(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        // Q1
+        const q1Options = document.querySelectorAll('#q1Options .option');
+        const q1Submit = document.getElementById('q1Submit');
+        const q1Feedback = document.getElementById('q1Feedback');
+        let q1Selected = null;
+
+        q1Options.forEach(opt => {
+            bindOptionClick(opt, () => {
+                q1Options.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                q1Selected = opt.getAttribute('data-value');
+                q1Submit.disabled = false;
+                q1Feedback.textContent = '';
+            });
+        });
+
+        q1Submit.addEventListener('click', () => {
+            if (!q1Selected) return;
+            if (q1Selected === '12') {
+                q1Feedback.textContent = '✅ Correct! 12 parallel objects.';
+                q1Feedback.style.color = '#3b5e1f';
+                q1Submit.disabled = true;
+                q1Options.forEach(o => { if (o.getAttribute('data-value')==='12') o.classList.add('correct-highlight'); });
+                markStepCompleted(0);
+            } else {
+                q1Feedback.textContent = '❌ Try again. (Hint: winning, honor, pride, integrity, desire, need, who…, whether achieving…, whether rich…, good looking, well-dressed, influential)';
+                q1Feedback.style.color = '#b13e3e';
+            }
+        });
+
+        // Q2
+        const q2Options = document.querySelectorAll('#q2Options .option');
+        const q2Submit = document.getElementById('q2Submit');
+        const q2Feedback = document.getElementById('q2Feedback');
+        let q2Selected = null;
+
+        q2Options.forEach(opt => {
+            bindOptionClick(opt, () => {
+                q2Options.forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                q2Selected = opt.getAttribute('data-value');
+                q2Submit.disabled = false;
+                q2Feedback.textContent = '';
+            });
+        });
+
+        q2Submit.addEventListener('click', () => {
+            if (!q2Selected) return;
+            if (q2Selected === 'B') {
+                q2Feedback.textContent = '✅ Correct! Restored with "whether we are…" for each adjective.';
+                q2Feedback.style.color = '#3b5e1f';
+                q2Submit.disabled = true;
+                q2Options.forEach(o => { if (o.getAttribute('data-value')==='B') o.classList.add('correct-highlight'); });
+                markStepCompleted(1);
+            } else {
+                q2Feedback.textContent = '❌ Not quite. It parallels the earlier "whether we are…" structure.';
+                q2Feedback.style.color = '#b13e3e';
+            }
+        });
+
+        // Q3 sub-questions
+        const q3Groups = ['q3aOptions', 'q3bOptions', 'q3cOptions'];
+        const q3Selections = { 'q3aOptions': null, 'q3bOptions': null, 'q3cOptions': null };
+        const q3Correct = { 'q3aOptions': 'B', 'q3bOptions': 'C', 'q3cOptions': 'D' };
+        const q3Submit = document.getElementById('q3Submit');
+        const q3Feedback = document.getElementById('q3Feedback');
+
+        q3Groups.forEach(groupId => {
+            const options = document.querySelectorAll(`#${groupId} .option`);
+            options.forEach(opt => {
+                bindOptionClick(opt, () => {
+                    options.forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    q3Selections[groupId] = opt.getAttribute('data-value');
+                    const allSelected = Object.values(q3Selections).every(v => v !== null);
+                    q3Submit.disabled = !allSelected;
+                });
+            });
+        });
+
+        q3Submit.addEventListener('click', () => {
+            let allCorrect = true;
+            for (const groupId of q3Groups) {
+                const selected = q3Selections[groupId];
+                if (selected !== q3Correct[groupId]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+            if (allCorrect) {
+                q3Feedback.textContent = '✅ Perfect! All three phrases correctly matched.';
+                q3Feedback.style.color = '#3b5e1f';
+                q3Submit.disabled = true;
+                for (const groupId of q3Groups) {
+                    const correctVal = q3Correct[groupId];
+                    const options = document.querySelectorAll(`#${groupId} .option`);
+                    options.forEach(o => {
+                        if (o.getAttribute('data-value') === correctVal) o.classList.add('correct-highlight');
+                    });
+                }
+                markStepCompleted(2);
+            } else {
+                q3Feedback.textContent = '❌ Some answers are incorrect. Double-check the optimal translation version.';
+                q3Feedback.style.color = '#b13e3e';
+            }
+        });
+
+        // Q4 ordering with shuffled dropdown options
+        const orderingGrid = document.getElementById('orderingGrid');
+        const q4SubmitBtn = document.getElementById('q4Submit');
+        const q4Feedback = document.getElementById('q4Feedback');
+
+        const fragments = [
+            '我们纠结于输赢、名誉、自尊与操守',
+            '渴望被倾听',
+            '执着于证明自己正确',
+            '在意他人是否认可自己',
+            '担忧自身成就是否足够',
+            '财富是否充裕',
+            '容貌是否出众',
+            '衣着是否得体',
+            '是否拥有影响力'
+        ];
+        const correctOrder = [0,1,2,3,4,5,6,7,8];
+
+        function buildOrderingGrid() {
+            orderingGrid.innerHTML = '';
+            // 为每个位置的下拉菜单生成随机顺序的选项索引
+            fragments.forEach((_, index) => {
+                const div = document.createElement('div');
+                div.className = 'order-item';
+                const posLabel = document.createElement('span');
+                posLabel.textContent = (index + 1) + '.';
+                const select = document.createElement('select');
+                select.setAttribute('data-position', index);
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.disabled = true;
+                defaultOpt.selected = true;
+                defaultOpt.textContent = '-- choose --';
+                select.appendChild(defaultOpt);
+                
+                // 随机打乱片段顺序
+                const shuffledIndices = shuffleArray([...Array(fragments.length).keys()]);
+                shuffledIndices.forEach(fragIndex => {
+                    const opt = document.createElement('option');
+                    opt.value = fragIndex;
+                    opt.textContent = fragments[fragIndex];
+                    select.appendChild(opt);
+                });
+                
+                div.appendChild(posLabel);
+                div.appendChild(select);
+                orderingGrid.appendChild(div);
+            });
+        }
+        buildOrderingGrid();
+
+        function updateProgress() {
+            const completedCount = completedSteps.filter(Boolean).length;
+            stepText.textContent = `Step ${completedCount} / ${totalSteps}`;
+            progressFill.style.width = `${(completedCount / totalSteps) * 100}%`;
+            if (completedCount === totalSteps) {
+                questionsContainer.style.display = 'none';
+                successPanel.style.display = 'block';
+            } else {
+                questionsContainer.style.display = 'block';
+                successPanel.style.display = 'none';
+                for (let i = 0; i < totalSteps; i++) {
+                    if (!completedSteps[i]) {
+                        questionBlocks.forEach((block, idx) => block.classList.toggle('active', idx === i));
+                        break;
+                    }
+                }
+            }
+        }
+
+        function markStepCompleted(stepIndex) {
+            if (!completedSteps[stepIndex]) {
+                completedSteps[stepIndex] = true;
+                updateProgress();
+            }
+        }
+
+        q4SubmitBtn.addEventListener('click', () => {
+            const selects = document.querySelectorAll('#orderingGrid select');
+            let userOrder = [];
+            let allFilled = true;
+            selects.forEach(sel => {
+                if (sel.value === '') allFilled = false;
+                userOrder.push(parseInt(sel.value, 10));
+            });
+            if (!allFilled) {
+                q4Feedback.textContent = '⚠️ Please select a fragment for every position.';
+                q4Feedback.style.color = '#b85c1a';
+                return;
+            }
+            const isCorrect = userOrder.length === correctOrder.length &&
+                userOrder.every((val, idx) => val === correctOrder[idx]);
+            if (isCorrect) {
+                q4Feedback.textContent = '✅ Excellent! The parallel sentence flows beautifully.';
+                q4Feedback.style.color = '#3b5e1f';
+                q4SubmitBtn.disabled = true;
+                markStepCompleted(3);
+            } else {
+                q4Feedback.textContent = '❌ The order isn\'t right. Try to build the sentence step by step.';
+                q4Feedback.style.color = '#b13e3e';
+            }
+        });
+
+        // Init
+        updateProgress();
+        q1Submit.disabled = true;
+        q2Submit.disabled = true;
+        q3Submit.disabled = true;
+    })();
+</script>
+</body>
+</html>
