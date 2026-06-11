@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mr. Chen's Class | Glasser's Needs Theory – Master Answers Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f7ee 0%, #fef7e8 100%);
+            font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 1.8rem;
+            font-size: 18px;
+            line-height: 1.5;
+            color: #2c3e2f;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .teacher-badge {
+            background: #2c5e5a;
+            color: #ffe7cf;
+            border-radius: 40px;
+            padding: 0.3rem 1.2rem;
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .teacher-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: white;
+            border-radius: 3rem;
+            padding: 0.8rem 1.8rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #ffdaa5;
+        }
+        .avatar {
+            background: #e67e22;
+            width: 56px;
+            height: 56px;
+            border-radius: 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .teacher-info h2 {
+            font-size: 1.4rem;
+            color: #1f4e4a;
+        }
+        .teacher-info p {
+            color: #5b6e5c;
+            font-size: 0.85rem;
+        }
+
+        .letter-card {
+            background: #fffef7;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            border-left: 12px solid #e67e22;
+        }
+        .letter-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1.5rem;
+            color: #2c5e5a;
+            margin-bottom: 1rem;
+        }
+        .demo-note {
+            background: #e67e2210;
+            border-radius: 1rem;
+            padding: 0.6rem 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #b45f1b;
+            border-left: 3px solid #e67e22;
+        }
+
+        .progress-bar {
+            background: white;
+            border-radius: 60px;
+            padding: 0.8rem 1.8rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .mindmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .mind-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.6rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+            border: 1px solid #ffe0b5;
+        }
+        .mind-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.12);
+            border-color: #e67e22;
+        }
+        .mind-icon {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .mind-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin: 0.5rem 0;
+            color: #1e4a47;
+        }
+        .mind-status {
+            font-size: 0.75rem;
+            color: #2a7f32;
+            font-weight: 600;
+            background: #e0f2e3;
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .view {
+            display: none;
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+        }
+        .view.active {
+            display: block;
+        }
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ffe0b5;
+            padding-bottom: 1rem;
+        }
+        .view-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1f4e4a, #e67e22);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .original-box {
+            background: #fef7e8;
+            padding: 1rem 1.2rem;
+            border-radius: 1.5rem;
+            margin: 1rem 0;
+            border-left: 5px solid #e67e22;
+            white-space: pre-wrap;
+        }
+
+        .glossary-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .glossary-panel {
+            background: #f1efe7;
+            border-radius: 1.2rem;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            display: none;
+        }
+        .glossary-item {
+            display: flex;
+            gap: 1rem;
+            margin: 0.5rem 0;
+            font-size: 0.85rem;
+            border-bottom: 1px dashed #ddceb5;
+            padding-bottom: 0.3rem;
+        }
+        .glossary-term {
+            font-weight: 700;
+            color: #b45f1b;
+            width: 120px;
+        }
+        .glossary-def {
+            color: #2d4a3b;
+        }
+
+        .question-item {
+            background: #fefaf5;
+            padding: 1.2rem;
+            border-radius: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid #f3e5cf;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+        .opt-btn {
+            background: #f0ebe2;
+            border: 1px solid #dcccaa;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected {
+            background: #2a7f32;
+            color: white;
+            border-color: #2a7f32;
+            box-shadow: 0 0 0 1px #e67e22;
+        }
+        .fill-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+        .fill-input {
+            width: 150px;
+            padding: 0.4rem 0.6rem;
+            border-radius: 1rem;
+            border: 1px solid #e2cfb0;
+            font-size: 1rem;
+            background: #fefef7;
+        }
+        .correct-answer-badge {
+            background: #eaf7e6;
+            color: #166534;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            padding: 0.2rem 0.7rem;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: 1rem;
+            border: 1px solid #e2cfb0;
+            background: #fffdf9;
+            font-size: 1rem;
+        }
+        .feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+        }
+        .feedback.correct { background: #dcfce7; color: #166534; }
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+        button.primary {
+            background: #e67e22;
+            color: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 3rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        button.secondary {
+            background: #cdd5cf;
+            color: #2c5e5a;
+            padding: 0.6rem 1.5rem;
+            border-radius: 3rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        .report-area {
+            background: #1e3a3a;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            color: #ffe7cf;
+            margin-top: 2rem;
+        }
+        .grading-area {
+            background: #2c5e5a;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin-top: 1rem;
+            color: #fff2e0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #a28b6f;
+        }
+        .final-mission {
+            background: #e67e2210;
+            border: 2px solid #e67e22;
+        }
+        .letter-template {
+            background: #fef5e7;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        .teacher-tag {
+            background: #f1c40f20;
+            border-radius: 20px;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 1rem;
+            vertical-align: middle;
+            color: #b76e0e;
+        }
+        @media (max-width: 680px) {
+            body { padding: 1rem; }
+            .view-title { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="teacher-badge">👩‍🏫 TEACHER SHOWCASE · FULL MODEL ANSWERS</div>
+    </div>
+    <div class="teacher-header">
+        <div class="avatar">🍎🏆</div>
+        <div class="teacher-info">
+            <h2>Mr. Chen · Psychology of Needs <span class="teacher-tag">Glasser's Theory</span></h2>
+            <p>✨ Model answers for all 6 topics + final letter | Classroom demonstration ready ✨</p>
+        </div>
+    </div>
+
+    <div class="letter-card">
+        <h3>📨 Letter from Student X (real case)</h3>
+        <p>"Dear Mr. Chen, I feel so stuck. My parents decide everything – my phone time, my weekend plans, even which friends I meet. Teachers seem to only notice the top students. Studying is a nightmare of boredom, yet if I don't push myself, I'll be a failure. What is wrong with me? Why can't I just feel happy? Please help me understand."</p>
+        <div class="demo-note">
+            🧪 Teacher mode: every topic is unlocked with <strong>correct objective answers + high-quality essay models</strong>. Click any card to reveal Glasser's original text, key terms, and the complete answer key.
+        </div>
+    </div>
+
+    <div class="progress-bar">
+        <span>📊 Progress: <span id="progressCount">7</span> / 7 (All completed ✅)</span>
+        <span>🎯 Showcase mode | All answers visible</span>
+        <span>📖 Click any topic to see model answers</span>
+    </div>
+
+    <div id="mindmapView" class="view active">
+        <div id="mindmapGrid" class="mindmap-grid"></div>
+        <div style="text-align: center; margin-top: 1rem;">
+            <button class="secondary" id="resetAllBtn" style="background:#ffe0b5;">⟳ Reset all progress (teacher reset)</button>
+            <button class="secondary" id="restoreDemoBtn" style="background:#cdd5cf; margin-left:1rem;">🌟 Restore model answers</button>
+        </div>
+    </div>
+
+    <div id="topicView" class="view"></div>
+
+    <div id="reportContainer" class="report-area" style="display: block;">
+        <h3>📊 Final Report & Essay Grading (CET-4 style)</h3>
+        <p>Download JSON report or copy to clipboard. All essays are scored automatically based on Glasser's framework.</p>
+        <button id="downloadReportBtn" class="primary" style="margin-right: 1rem;">⬇️ Download Report</button>
+        <button id="copyReportBtn" class="secondary" style="background:#cdd5cf;">📋 Copy to Clipboard</button>
+        <button id="gradeBtn" class="primary" style="background:#2c5e5a;">⭐ Grade All Essays</button>
+        <div id="gradingPanel" class="grading-area" style="display:none; margin-top:1rem;"></div>
+    </div>
+    <footer>🏫 Based on William Glasser's "The Needs That Drive Us All" | All answers visible for classroom instruction</footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // TEACHER SHOWCASE – All topics pre-completed with correct answers & model essays
+    // --------------------------------------------------------------
+    const topicsRaw = [
+        { id:0, title:"🔮 Topic 1 · The Five Hidden Engines", 
+          originalText:`Humans not only need (1) to survive and reproduce, but also (2) to belong and love, (3) to gain power, (4) to be free and (5) to have fun. All five needs are built into our genetic structure as instructions for how we must attempt to live our lives. All are important and must be reasonably satisfied if we are to fulfill our biological destiny.`,
+          glossary:[{term:"genetic structure",def:"DNA / built-in instructions"},{term:"reasonably satisfied",def:"met enough to avoid frustration"}],
+          xiaomingLink:"Which of X's needs (freedom, belonging, fun, power) seem unsatisfied?",
+          objectiveQs:[
+            {type:"mc",text:"According to Glasser, how many basic needs does he list?",options:["3","4","5","6"],correct:"5",feedbackHint:"Count the five items."},
+            {type:"tf",text:"Glasser says these needs are learned from culture, not genetic.",options:["True","False"],correct:"False",feedbackHint:"Built into genetic structure"},
+            {type:"fill",text:"Complete: 'All five needs are built into our ________ ________ as instructions.'",correct:["genetic","structure"],firstLetters:["g","s"],hintPerBlank:["g_______","s_______"]}
+          ],
+          essayQuestion:"Why must these five needs be 'reasonably satisfied'? What happens if a need is completely ignored? Use X's situation.",
+          essayMinWords:25,
+        },
+        { id:1, title:"⚖️ Topic 2 · Power: Neither Good Nor Evil", 
+          originalText:`But regardless of cultural prejudices, power itself is neither good nor bad. In fact, if it were not for the need for power, our whole economy would crumble because almost all that is bought and sold, except for bare necessities, is for the sake of power. ... You can decide for yourself whether power is used more for good than for evil, but simply as a genetic need it has no morality.`,
+          glossary:[{term:"cultural prejudices",def:"society's unfair judgments"},{term:"crumble",def:"collapse"}],
+          xiaomingLink:"Parents/teachers using power — is the problem power itself or the way it's used?",
+          objectiveQs:[
+            {type:"mc",text:"What does Glasser say about power's moral nature?",options:["Always evil","Always good","Neither good nor bad","Depends on culture"],correct:"Neither good nor bad",feedbackHint:"it has no morality"},
+            {type:"tf",text:"Glasser believes that without the need for power, the economy would not change.",options:["True","False"],correct:"True",feedbackHint:"Class direction: True (economy relies on power)"},
+            {type:"fill",text:"Glasser gives the example of ________ ________ ________ to illustrate power can be used for good.",correct:["Martin","Luther","King"],firstLetters:["M","L","K"],hintPerBlank:["M_______","L_____","K____"]}
+          ],
+          essayQuestion:"X complains about controlling parents and favoritism. Is the problem power itself, or how people use it? Explain.",
+          essayMinWords:25,
+        },
+        { id:2, title:"⚡ Topic 3 · Freedom vs. Power", 
+          originalText:`Freedom, another basic need, is often in conflict with power. The more power you have, even if you use it for my benefit, the less freedom I have. It seems that there has to be a counterforce to power; unbridled power would be destructive to the survival of the species.`,
+          glossary:[{term:"counterforce",def:"something that balances power"},{term:"unbridled power",def:"unlimited power"}],
+          xiaomingLink:"Parents' power reduces X's freedom. What could be a 'counterforce'?",
+          objectiveQs:[
+            {type:"mc",text:"According to the passage, what is the relationship between power and freedom?",options:["They always increase together","More power means less freedom for others","Freedom is more important than power","No relationship"],correct:"More power means less freedom for others",feedbackHint:"Direct quote"},
+            {type:"tf",text:"Glasser says unbridled power could be destructive to survival.",options:["True","False"],correct:"True",feedbackHint:"destructive to survival"},
+            {type:"fill",text:"Complete: 'The more power you have, the less ________ I have.'",correct:["freedom"],firstLetters:["f"],hintPerBlank:["f_______"]}
+          ],
+          essayQuestion:"How can X negotiate for more freedom without demanding parents give up all power? Suggest a realistic compromise using 'counterforce'.",
+          essayMinWords:25,
+        },
+        { id:3, title:"💞 Topic 4 · Belonging vs. Freedom", 
+          originalText:`For example, if you want me around too much, I claim you stifle me, but if you aren't constantly giving me attention, I may claim you don't love me.`,
+          glossary:[{term:"stifle",def:"suffocate / restrict too much"}],
+          xiaomingLink:"X needs care but also independence. Where is the balance?",
+          objectiveQs:[
+            {type:"mc",text:"What two extremes does Glasser describe?",options:["Too much attention = stifling; too little = unloved","Power vs freedom","Fun vs boredom","Survival vs reproduction"],correct:"Too much attention = stifling; too little = unloved",feedbackHint:"example in para"},
+            {type:"tf",text:"Glasser suggests that belonging and freedom never conflict.",options:["True","False"],correct:"False",feedbackHint:"They directly conflict"},
+            {type:"fill",text:"If someone wants you around too much, you feel ________.",correct:["stifled"],firstLetters:["s"],hintPerBlank:["s_______"]}
+          ],
+          essayQuestion:"Is X's problem more about too much control (lack of freedom) or not enough belonging? Or both? Explain.",
+          essayMinWords:25,
+        },
+        { id:4, title:"🎮 Topic 5 · Fun & Learning", 
+          originalText:`Driven by the need for fun, we always have a powerful genetic incentive to keep trying to learn as much as we can. Without the relationship between fun and learning we would not learn nearly as much. Boredom is the opposite of fun. It always occurs when we have to spend time without learning.`,
+          glossary:[{term:"genetic incentive",def:"built-in motivation"},{term:"boredom",def:"lack of learning engagement"}],
+          xiaomingLink:"X says 'studying is SO boring'. How can we add fun?",
+          objectiveQs:[
+            {type:"mc",text:"According to Glasser, what is the opposite of fun?",options:["Happiness","Boredom","Anger","Power"],correct:"Boredom",feedbackHint:"explicit statement"},
+            {type:"tf",text:"Fun is just entertainment and has no role in learning.",options:["True","False"],correct:"False",feedbackHint:"genetic incentive to learn"},
+            {type:"fill",text:"Complete: 'Boredom always occurs when we have to spend time without ________.'",correct:["learning"],firstLetters:["l"],hintPerBlank:["l_______"]}
+          ],
+          essayQuestion:"Suggest two changes to X's study routine that would add fun (use power, freedom, or belonging).",
+          essayMinWords:25,
+        },
+        { id:5, title:"🧠 Topic 6 · Inner Drives & Society", 
+          originalText:`All living creatures are driven by the basic need to stay alive and reproduce so that the species will continue. As creatures have evolved from simple to complex, they have developed additional basic needs ... Humans not only need (1) to survive and reproduce, but also (2) to belong and love, (3) to gain power, (4) to be free and (5) to have fun. All five needs are built into our genetic structure ... When we attempt to satisfy the non-essential psychological needs, such as belonging, fun, freedom, and especially power, we run into more difficulty. In many cultures the mores of the culture condemn those who openly strive for it.`,
+          glossary:[{term:"mores",def:"customs / social norms"},{term:"condemn",def:"criticize strongly"}],
+          xiaomingLink:"X's actions come from inner needs, not only external pressure. How does Glasser prove this?",
+          objectiveQs:[
+            {type:"mc",text:"Why does Glasser emphasize five basic needs?",options:["To show culture controls us","To argue actions are driven by genetic needs, though culture shapes expression","Power is the only need","External rewards matter most"],correct:"To argue actions are driven by genetic needs, though culture shapes expression",feedbackHint:"needs are genetic + culture influences"},
+            {type:"tf",text:"Glasser believes external culture has no effect on how we satisfy needs.",options:["True","False"],correct:"False",feedbackHint:"culture condemns power-seeking"},
+            {type:"fill",text:"Our five needs are built into our ________ structure, but expression can be influenced by ________.",correct:["genetic","culture"],firstLetters:["g","c"],hintPerBlank:["g_______","c_______"]}
+          ],
+          essayQuestion:"Explain why our actions come from internal needs, not just outside pressure. Use X's situation.",
+          essayMinWords:25,
+        }
+    ];
+
+    const finalMission = {
+        id:6, title:"🎯 FINAL MISSION · Reply to Student X",
+        originalText:`Now that you have learned about Glasser's five basic needs, write a caring and thoughtful reply to X. Use proper letter format.`,
+        glossary:[], xiaomingLink:"Write a direct reply to his questions: 'What is wrong with me? Why can't I just feel happy?' Give him advice based on Glasser's theory.",
+        objectiveQs:[], essayQuestion:"", essayMinWords:50,
+    };
+    const allTopics = [...topicsRaw, finalMission];
+
+    // Model essays (full marks, used for showcase)
+    const modelEssays = {
+        0: `Glasser's five basic needs are not optional; they are genetically inscribed. If one need is completely ignored, frustration and psychological pain arise — just like X's boredom (lack of fun) and feeling controlled (lack of freedom). Reasonable satisfaction means we cannot fully suppress any need. For X, his parents ignore his need for freedom and fun, making him feel stuck. A balanced environment would allow him to have choices in his study schedule, satisfying both power and freedom, so that learning becomes meaningful.`,
+        1: `The problem is never power itself, but how people use it. Glasser clearly states power has no morality — it's a neutral genetic drive. Parents use power to protect, but X experiences it as control and favoritism at school. The misuse (authoritarian control without explanation) causes resentment. If parents shared power by negotiating reasonable rules, X would feel respected. Therefore, the way power is exercised determines whether it hurts or helps.`,
+        2: `X can negotiate for more freedom by using the "counterforce" idea: proposing small, earned privileges. For example, after finishing homework, X could ask for 30 minutes of phone time without checking. Parents keep final authority but release some control as trust builds. This respects parents' need for power (ensuring responsibility) and X's need for freedom. A written agreement like "study first, then free time" creates balance.`,
+        3: `X's frustration involves both: too much control (lack of freedom) AND insufficient emotional belonging. His parents decide everything (stifling) yet he feels unseen because teachers only notice top students. Glasser warns that extremes hurt. X needs parents who both set limits AND show warmth. A family meeting to express feelings could restore belonging while adjusting rules to offer more autonomy.`,
+        4: `1) Power: let X choose the order of subjects to study — this gives him control, making tasks less boring. 2) Belonging: create a study group with one friend, adding social fun. 3) Freedom: use a timer for 25-min focused study followed by 5-min break (Pomodoro). Gamification (earning stars for each completed task) also satisfies the need for fun, turning dull homework into a challenge.`,
+        5: `Our actions spring from innate needs, not just external pressure. X's desire for freedom and belonging is genetic — he is not "lazy" or "broken". External rules from parents only shape how he tries to meet those needs. When blocked, pain emerges. Glasser proves that even without outside pressure, humans still seek power, fun, and love. X's frustration is a signal that his internal blueprint is denied, not a personal flaw.`,
+        6: `Dear X,\n\nFirst, nothing is "wrong" with you. Your frustration is a sign that your deepest needs — for freedom, fun, and respect — are not being met. According to Glasser's theory, we all need to belong, gain power, be free, and have fun. Your parents' control blocks your freedom, and boring study kills fun. That's why you feel unhappy.\n\nHere's a small step: ask your parents for one hour of "self-planning time" after homework. Explain that you need to practice making choices. Also, join a study group to add belonging. You are not a failure — you are a normal person with unmet needs. Try to communicate calmly, and if it's hard, write a letter.\n\nSincerely,\nProfessor Chen (Demo)`
+    };
+
+    let topicCompletion = [true, true, true, true, true, true, true];
+    let essayAttempts = [0,0,0,0,0,0,0];
+    let userEssays = [modelEssays[0], modelEssays[1], modelEssays[2], modelEssays[3], modelEssays[4], modelEssays[5], modelEssays[6]];
+    let topicOrder = [0,1,2,3,4,5,6];
+    let currentTopicId = null, currentQuestions = [], currentTopicRef = null, currentGlossary = [];
+
+    function saveProgress() {
+        localStorage.setItem("needsExplorerTeacherDemo", JSON.stringify({topicCompletion,userEssays,essayAttempts}));
+        document.getElementById("lastSave") && (document.getElementById("lastSave").innerText = new Date().toLocaleTimeString());
+    }
+    function updateProgressBar(){ document.getElementById("progressCount").innerText = "7"; }
+    function renderMindmap(){
+        const grid = document.getElementById("mindmapGrid");
+        if(!grid) return;
+        grid.innerHTML = "";
+        for(let i=0;i<topicOrder.length;i++){
+            const origId = topicOrder[i];
+            const topic = allTopics[origId];
+            grid.innerHTML += `<div class="mind-card unlocked" data-id="${origId}"><div class="mind-icon">🏆</div><div class="mind-title">${topic.title}</div><div class="mind-status">✅ Completed (model answer)</div></div>`;
+        }
+        document.querySelectorAll(".mind-card").forEach(card=>{
+            const origId = parseInt(card.dataset.id);
+            card.addEventListener("click",()=> openTopic(origId));
+        });
+    }
+    function getRandomQuestions(topic){ return topic.objectiveQs ? topic.objectiveQs.slice(0,2) : []; }
+    
+    function openTopic(origId){
+        currentTopicId = origId;
+        const topic = allTopics[origId];
+        currentTopicRef = topic;
+        currentQuestions = getRandomQuestions(topic);
+        currentGlossary = topic.glossary || [];
+        const viewDiv = document.getElementById("topicView");
+        let extraHtml = "", essayHtml = "";
+        if(origId === 6){
+            extraHtml = `<div class="final-mission" style="background:#fef2e0; padding:1rem; border-radius:1.5rem; margin-bottom:1rem;">🎯 FINAL TASK: Model reply letter (50+ words, proper format)</div>`;
+            essayHtml = `<div class="question-item"><strong>📝 Reply to X (model answer shown below):</strong><br><div class="letter-template"><div class="letter-salutation">Dear X,</div><textarea id="essayText" rows="6" style="font-family:monospace;">${escapeHtml(userEssays[origId] || "")}</textarea><div class="letter-closing">Sincerely,<br><input type="text" id="studentName" placeholder="Your name" value="Mr. Chen (Demo)" style="width:200px; margin-top:0.3rem;"></div></div><div id="essayFeedback" class="feedback"></div></div>`;
+        } else {
+            essayHtml = `<div class="question-item"><strong>📝 Reflection Essay (model answer provided):</strong><br>${escapeHtml(topic.essayQuestion)}<br><textarea id="essayText" rows="5">${escapeHtml(userEssays[origId] || "")}</textarea><div id="essayFeedback" class="feedback"></div></div>`;
+        }
+        viewDiv.innerHTML = `<div class="view-header"><span class="view-title">${topic.title}</span><button class="secondary" id="backToMindBtn">← Back to map</button></div><div class="original-box"><strong>📖 Glasser's original text:</strong><br><pre style="white-space:pre-wrap; font-family:inherit;">${escapeHtml(topic.originalText || "Reference the theory")}</pre>${topic.glossary?`<button id="glossaryBtn" class="glossary-btn">📖 Key Terms</button><div id="glossaryPanel" class="glossary-panel"></div>`:''}</div>${extraHtml}<div><strong>🔗 Connect to X's letter:</strong> ${topic.xiaomingLink}</div><div id="questionsArea"></div>${essayHtml}<div class="action-buttons"><button id="submitTopicBtn" class="primary">✍️ Save & Re-score essay</button><button id="resetTopicBtn" class="secondary">⟳ Restore model answer</button></div>`;
+        if(topic.glossary){
+            document.getElementById("glossaryBtn")?.addEventListener("click",()=>{const panel=document.getElementById("glossaryPanel");if(panel.style.display==="block")panel.style.display="none";else{let html="";currentGlossary.forEach(g=>{html+=`<div class="glossary-item"><span class="glossary-term">${escapeHtml(g.term)}</span><span class="glossary-def">${escapeHtml(g.def)}</span></div>`;});panel.innerHTML=html;panel.style.display="block";}});
+        }
+        document.getElementById("backToMindBtn").addEventListener("click",()=>{document.getElementById("mindmapView").classList.add("active");document.getElementById("topicView").classList.remove("active");});
+        document.getElementById("submitTopicBtn").addEventListener("click",()=>submitTopic(origId));
+        document.getElementById("resetTopicBtn").addEventListener("click",()=>{
+            userEssays[origId] = modelEssays[origId] || modelEssays[6];
+            saveProgress();
+            openTopic(origId);
+        });
+        renderQuestionsUI(currentQuestions);
+        document.getElementById("mindmapView").classList.remove("active");
+        document.getElementById("topicView").classList.add("active");
+    }
+    
+    function renderQuestionsUI(questions){
+        const container = document.getElementById("questionsArea");
+        if(!container) return;
+        let html = "";
+        if(questions.length){
+            questions.forEach((q, idx)=>{
+                html += `<div class="question-item"><strong>❓ Q${idx+1}:</strong> ${escapeHtml(q.text)}<br>`;
+                if(q.type === "mc" || q.type === "tf"){
+                    html += `<div class="options" id="opts-${idx}">`;
+                    let optsCopy = [...q.options];
+                    for(let i=optsCopy.length-1;i>0;i--){const j=Math.random()*(i+1)>>0;[optsCopy[i],optsCopy[j]]=[optsCopy[j],optsCopy[i]];}
+                    optsCopy.forEach(opt=>{
+                        const isCorrect = (opt === q.correct);
+                        const selectedClass = isCorrect ? 'selected' : '';
+                        html += `<button class="opt-btn ${selectedClass}" data-qidx="${idx}" data-val="${escapeHtml(opt)}" ${isCorrect ? 'disabled style="opacity:0.9;"' : ''}>${escapeHtml(opt)}</button>`;
+                    });
+                    html += `</div><div class="correct-answer-badge">✔ Correct answer: ${q.correct}</div>`;
+                } else if(q.type === "fill"){
+                    let parts = q.correct;
+                    for(let i=0;i<parts.length;i++){
+                        html += `<div style="margin:0.5rem 0;"><strong>Blank ${i+1}:</strong> <input type="text" id="fill-${idx}-${i}" class="fill-input" value="${escapeHtml(parts[i])}" readonly style="background:#f3f0e6;"></div>`;
+                    }
+                    html += `<div class="correct-answer-badge">✔ Answer: ${parts.join(' ')}</div>`;
+                }
+                html += `<div id="fb-${idx}" class="feedback correct" style="margin-top:0.5rem;">✓ Correct answer shown above (teacher reference)</div></div>`;
+            });
+        } else {
+            html = "<p>✅ No objective questions for this topic — model essay provided below.</p>";
+        }
+        container.innerHTML = html;
+    }
+    
+    function gradeEssay(text, topicId, minLen){
+        if(!text) return {score:0, feedback:"No answer"};
+        let score = 8;
+        if(text.length >= minLen) score = 9;
+        if(text.toLowerCase().includes("freedom") && text.toLowerCase().includes("power")) score = 10;
+        if(topicId === 6 && text.includes("Sincerely")) score = 10;
+        score = Math.min(10, score);
+        let feedback = score >= 9 ? "Excellent model answer – demonstrates deep understanding." : "Good, consider adding more Glasser concepts.";
+        return {score, feedback};
+    }
+    
+    function submitTopic(origId){
+        let essayText = document.getElementById("essayText")?.value.trim() || "";
+        if(origId === 6){
+            const nameInput = document.getElementById("studentName");
+            const studentName = nameInput ? nameInput.value.trim() : "";
+            if(studentName && !essayText.includes("Sincerely")) essayText = essayText + "\n\nSincerely,\n" + studentName;
+        }
+        const minLen = allTopics[origId].essayMinWords || 25;
+        if(essayText.length < minLen){
+            document.getElementById("essayFeedback").innerHTML = `❌ Essay too short (${essayText.length} chars, need ${minLen}). Add more detail.`;
+            document.getElementById("essayFeedback").className = "feedback wrong";
+            return;
+        }
+        userEssays[origId] = essayText;
+        saveProgress();
+        document.getElementById("essayFeedback").innerHTML = "✅ Essay updated. Click 'Grade All Essays' to see new score.";
+        document.getElementById("essayFeedback").className = "feedback correct";
+    }
+    
+    function gradeAllEssays(){
+        const gradingDiv = document.getElementById("gradingPanel");
+        if(!gradingDiv) return;
+        let totalScore = 0, maxScore = allTopics.length * 10;
+        let feedbackHtml = "<h3>📝 Essay Grading (Model Answers + Edits)</h3>";
+        for(let i=0;i<allTopics.length;i++){
+            const topic = allTopics[i];
+            const essay = userEssays[i];
+            const minLen = topic.essayMinWords || 25;
+            let result = {score:0, feedback:"Not completed"};
+            if(topicCompletion[i]) result = gradeEssay(essay, i, minLen);
+            totalScore += result.score;
+            feedbackHtml += `<div style="border-bottom:1px solid #ddceb5; margin-bottom:0.8rem;"><strong>${topic.title}</strong> (${result.score}/10)<br>${result.feedback}</div>`;
+        }
+        feedbackHtml += `<hr><strong>Total Score: ${totalScore}/${maxScore}</strong><br>🏆 Showcase quality – all answers meet high standards.`;
+        gradingDiv.innerHTML = feedbackHtml;
+        gradingDiv.style.display = "block";
+    }
+    
+    function generateReport(){
+        let report = {teacherDemo: true, completedAt: new Date().toISOString(), topics: []};
+        for(let i=0;i<allTopics.length;i++) report.topics.push({title: allTopics[i].title, completed: topicCompletion[i], essayAnswer: userEssays[i]});
+        return JSON.stringify(report, null, 2);
+    }
+    
+    function restoreDemo(){
+        userEssays = [modelEssays[0], modelEssays[1], modelEssays[2], modelEssays[3], modelEssays[4], modelEssays[5], modelEssays[6]];
+        topicCompletion = [true,true,true,true,true,true,true];
+        essayAttempts = [0,0,0,0,0,0,0];
+        saveProgress();
+        renderMindmap();
+        updateProgressBar();
+        alert("All model answers restored. Ready for classroom demonstration.");
+    }
+    
+    function escapeHtml(str){ if(!str) return ""; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});}
+    
+    document.getElementById("downloadReportBtn")?.addEventListener("click",()=>{const data=generateReport();const blob=new Blob([data],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`teacher_demo_report_${Date.now()}.json`;a.click();URL.revokeObjectURL(url);});
+    document.getElementById("copyReportBtn")?.addEventListener("click",async()=>{await navigator.clipboard.writeText(generateReport());alert("Report copied to clipboard.");});
+    document.getElementById("gradeBtn")?.addEventListener("click",gradeAllEssays);
+    document.getElementById("resetAllBtn")?.addEventListener("click",()=>{if(confirm("Reset all progress? Use 'Restore model answers' to bring back full answers.")){localStorage.removeItem("needsExplorerTeacherDemo"); restoreDemo();}});
+    document.getElementById("restoreDemoBtn")?.addEventListener("click",restoreDemo);
+    
+    renderMindmap();
+    updateProgressBar();
+    saveProgress();
+</script>
+</body>
+</html>
