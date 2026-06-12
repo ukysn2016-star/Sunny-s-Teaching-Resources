@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Linguistic Paraphrase Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,600;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #d69e2e; /* 琥珀色用于核心词汇高亮 */
+            --success: #2f855a;
+            --success-light: #f0fff4;
+            --error: #c53030;
+            --error-light: #fff5f5;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+        }
+
+        /* 顶部学术实验室面板 */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 35px;
+            box-shadow: 0 15px 30px rgba(26, 54, 93, 0.15);
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        /* 动态实验进度条 */
+        .progress-wrapper {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #ecc94b;
+            width: 12.5%; /* 初始 1/8 进度 */
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 每道题专属的原句显示框 */
+        .context-sentence-box {
+            background-color: #f7fafc;
+            border-left: 4px solid #cbd5e0;
+            padding: 12px 18px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+
+        .context-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #718096;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .context-text {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin: 0;
+        }
+
+        /* 琥珀色高亮目标词块（绝不暗示正确选项） */
+        .focus-token {
+            background-color: #fefcbf;
+            color: #b7791f;
+            padding: 1px 4px;
+            border-radius: 3px;
+            border-bottom: 2px solid #ecc94b;
+            font-weight: 700;
+        }
+
+        /* 实验答题关卡卡片 */
+        .part-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* 趣味锁闭状态 */
+        .part-card.locked {
+            opacity: 0.35;
+            pointer-events: none;
+            background-color: #edf2f7;
+            transform: scale(0.98);
+            filter: blur(1px);
+        }
+
+        .part-title {
+            color: var(--primary);
+            font-size: 1.4rem;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 12px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding: 22px;
+            border-radius: 12px;
+            background: #ffffff;
+            border: 1px solid #edf2f7;
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .options-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .option-item {
+            margin-bottom: 10px;
+            padding: 14px 18px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.15s, border-color 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .option-item:hover {
+            background-color: #f7fafc;
+            border-color: var(--primary-light);
+            transform: translateX(3px);
+        }
+
+        .option-item input {
+            margin-right: 14px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        /* 状态判定样式 */
+        .option-item.correct-choice {
+            background-color: #c6f6d5 !important;
+            border-color: #38a169 !important;
+            font-weight: 600;
+        }
+
+        .question-block.wrong-q {
+            border-left: 5px solid var(--error);
+            background-color: var(--error-light);
+        }
+
+        .question-block.right-q {
+            border-left: 5px solid var(--success);
+            background-color: var(--success-light);
+        }
+
+        .status-indicator {
+            font-size: 1.1rem;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .explanation {
+            margin-top: 15px;
+            padding: 16px;
+            background-color: #f8fafc;
+            border-radius: 10px;
+            display: none;
+            font-size: 0.95rem;
+            color: #4a5568;
+            border-left: 3px solid #cbd5e0;
+        }
+
+        /* 互动学术按钮 */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.05rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(26, 54, 93, 0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(26, 54, 93, 0.15);
+        }
+
+        .btn:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .msg-box {
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+            font-size: 0.95rem;
+        }
+        .msg-box.warning { background-color: #feebc8; color: #c05621; border: 1.5px solid #fbd38d; }
+        .msg-box.success { background-color: #c6f6d5; color: #22543d; border: 1.5px solid #9ae6b4; }
+
+        #confetti-canvas {
+            position: fixed; top: 0; left: 0; pointer-events: none; width: 100%; height: 100%; z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="container">
+    <header>
+        <h1>The Linguistic Paraphrase Lab</h1>
+        <p>Advanced Academic Decoding Experience for English Majors</p>
+        <div class="progress-wrapper">
+            <div class="progress-bar" id="lab-progress"></div>
+        </div>
+    </header>
+
+    <div class="part-card" id="part-1">
+        <h2 class="part-title">🧠 Part 1: Global Understanding</h2>
+        
+        <div class="question-block" id="q1" data-type="single" data-ans="B">
+            <p class="question-text">Q1. Read the sentence and choose the best answer: What is the main idea of this sentence?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"<span class="focus-token">All are important and must be reasonably satisfied if we are to fulfill our biological destiny.</span>"</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q1" value="A">A. Humans should satisfy all their desires as much as possible.</label>
+                <label class="option-item"><input type="radio" name="q1" value="B">B. All basic needs are important and should be properly met.</label>
+                <label class="option-item"><input type="radio" name="q1" value="C">C. Only biological needs are important for humans.</label>
+                <label class="option-item"><input type="radio" name="q1" value="D">D. People should focus only on survival and reproduction.</label>
+            </ul>
+            <div class="explanation">
+                <strong>🧑‍🏫 Detailed Explanation:</strong><br>
+                A ❌：误把 reasonably 理解为“越多越好”；<br>
+                B ✅：准确表达了核心概念——所有需求都很重要，且需要合理、妥善地满足；<br>
+                C & D ❌：均属于断章取义，缩小了文中所指的五种基本需求的范畴。
+            </div>
+        </div>
+
+        <div class="question-block" id="q2_1" data-type="single" data-ans="False">
+            <p class="question-text">Q2.1 Decide whether the statement is TRUE or FALSE: "All" refers to all human activities.<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"<span class="focus-token">All</span> are important and must be reasonably satisfied if we are to fulfill our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q2_1" value="True">TRUE</label>
+                <label class="option-item"><input type="radio" name="q2_1" value="False">FALSE</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> ❌：“All”回指上文提及的五种基本需求（needs），并非宏观的“人类所有活动（activities）”。</div>
+        </div>
+
+        <div class="question-block" id="q2_2" data-type="single" data-ans="False">
+            <p class="question-text">Q2.2 Decide whether the statement is TRUE or FALSE: The sentence suggests that too much satisfaction is acceptable with "reasonably".<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">All are important and must be <span class="focus-token">reasonably</span> satisfied if we are to fulfill our biological destiny.</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q2_2" value="True">TRUE</label>
+                <label class="option-item"><input type="radio" name="q2_2" value="False">FALSE</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> ❌：“reasonably”直接确定了底线是“适度与合理”，排除了过度（overindulgence）的可接受性。</div>
+        </div>
+
+        <div class="question-block" id="q2_3" data-type="single" data-ans="True">
+            <p class="question-text">Q2.3 Decide whether the statement is TRUE or FALSE: The sentence emphasizes balance in meeting needs through "reasonably satisfied".<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">All are important and must be <span class="focus-token">reasonably satisfied</span> if we are to fulfill our biological destiny.</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q2_3" value="True">TRUE</label>
+                <label class="option-item"><input type="radio" name="q2_3" value="False">FALSE</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> ✅：此句的核心要义确实是强调要在满足各项需求之间建立起一种理性的平衡。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(1)">Verify Research Part 1</button>
+        <div class="msg-box" id="msg-1"></div>
+    </div>
+
+    <div class="part-card locked" id="part-2">
+        <h2 class="part-title">🔍 Part 2: Understanding Key Words</h2>
+        
+        <div class="question-block" id="q3" data-type="single" data-ans="B">
+            <p class="question-text">Q3. Read the sentence and answer the question: What does the pronoun refer to?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"<span class="focus-token">All</span> are important and must be reasonably satisfied if we are to fulfill our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q3" value="A">A. All human beings</label>
+                <label class="option-item"><input type="radio" name="q3" value="B">B. All five basic human needs mentioned earlier</label>
+                <label class="option-item"><input type="radio" name="q3" value="C">C. All biological processes</label>
+                <label class="option-item"><input type="radio" name="q3" value="D">D. All living creatures</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ✅：结合上下文代词一致性，此处代词回指前文精细拆解的五种人类基本生存与心理需求。</div>
+        </div>
+
+        <div class="question-block" id="q4" data-type="single" data-ans="C">
+            <p class="question-text">Q4. What does the highlighted word most nearly mean in this context?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be <span class="focus-token">reasonably</span> satisfied if we are to fulfill our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q4" value="A">A. Completely</label>
+                <label class="option-item"><input type="radio" name="q4" value="B">B. Excessively</label>
+                <label class="option-item"><input type="radio" name="q4" value="C">C. In a balanced and moderate way</label>
+                <label class="option-item"><input type="radio" name="q4" value="D">D. Quickly</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> C ✅：“reasonably” 在此语境下对应学术写作中的“适度地、不走极端地（moderately）”，并非指百分之百或过量。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(2)">Verify Research Part 2</button>
+        <div class="msg-box" id="msg-2"></div>
+    </div>
+
+    <div class="part-card locked" id="part-3">
+        <h2 class="part-title">🔬 Part 3: Deep Dive into "Biological Destiny"</h2>
+        
+        <div class="question-block" id="q5" data-type="single" data-ans="B">
+            <p class="question-text">Q5. What does the modifier mean in this academic text?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to fulfill our <span class="focus-token">biological</span> destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q5" value="A">A. related to society and culture</label>
+                <label class="option-item"><input type="radio" name="q5" value="B">B. related to the body and natural life processes</label>
+                <label class="option-item"><input type="radio" name="q5" value="C">C. related to career success</label>
+                <label class="option-item"><input type="radio" name="q5" value="D">D. related to formal education</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ✅：指生命作为有机体在生理、躯体及繁衍等自然属性层面的必然要求。</div>
+        </div>
+
+        <div class="question-block" id="q6" data-type="single" data-ans="C">
+            <p class="question-text">Q6. What does the noun signify in this placement?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to fulfill our biological <span class="focus-token">destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q6" value="A">A. something we choose freely</label>
+                <label class="option-item"><input type="radio" name="q6" value="B">B. an unimportant coincidence</label>
+                <label class="option-item"><input type="radio" name="q6" value="C">C. a natural or expected purpose</label>
+                <label class="option-item"><input type="radio" name="q6" value="D">D. a short-term practical plan</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> C ✅：在生命科学和人文学科交汇的文本中，“destiny” 常演化为指代生命演进中所被赋予的“终极使命或预设自然目的”。</div>
+        </div>
+
+        <div class="question-block" id="q7" data-type="single" data-ans="B">
+            <p class="question-text">Q7. Which of the following BEST explains the nominal combination?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to fulfill our <span class="focus-token">biological destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q7" value="A">A. A person’s ultimate career goal</label>
+                <label class="option-item"><input type="radio" name="q7" value="B">B. A natural purpose related to human life and survival</label>
+                <label class="option-item"><input type="radio" name="q7" value="C">C. A set of demanding social responsibilities</label>
+                <label class="option-item"><input type="radio" name="q7" value="D">D. An idealized personal dream</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ✅：将二者相连，意指作为人类生命体所必须达成的自然生命循环、健全生活和种群延续的目标。</div>
+        </div>
+
+        <div class="question-block" id="q8" data-type="single" data-ans="B">
+            <p class="question-text">Q8. Which clause best expresses the complete meaning of the highlighted phrase?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to <span class="focus-token">fulfill our biological destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q8" value="A">A. To become exceptionally successful in society</label>
+                <label class="option-item"><input type="radio" name="q8" value="B">B. To achieve our natural role and function as human beings</label>
+                <label class="option-item"><input type="radio" name="q8" value="C">C. To gain absolute control over the environment</label>
+                <label class="option-item"><input type="radio" name="q8" value="D">D. To avoid any future biological problems</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ✅：不仅是“活着”，更是实现作为完整人类（有生理需求、也有社会心理需求）应当扮演的健全自然角色。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(3)">Verify Research Part 3</button>
+        <div class="msg-box" id="msg-3"></div>
+    </div>
+
+    <div class="part-card locked" id="part-4">
+        <h2 class="part-title">🔄 Part 4: Sentence Structure</h2>
+        
+        <div class="question-block" id="q9" data-type="single" data-ans="B">
+            <p class="question-text">Q9. What is the logical relationship established by the conjunction?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied <span class="focus-token">if</span> we are to fulfill our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q9" value="A">A. Cause → Effect</label>
+                <label class="option-item"><input type="radio" name="q9" value="B">B. Condition → Result</label>
+                <label class="option-item"><input type="radio" name="q9" value="C">C. Comparison</label>
+                <label class="option-item"><input type="radio" name="q9" value="D">D. Contrast</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ✅：由连词 "if" 引导条件状语从句，表述为了达到某种终极状态（结果），前半句主句所必须提供的前提条件。</div>
+        </div>
+
+        <div class="question-block" id="q10" data-type="single" data-ans="B">
+            <p class="question-text">Q10. Choose the correct grammatical division (sense group / chunking) of the sentence:<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"<span class="focus-token">All are important and must be reasonably satisfied if we are to fulfill our biological destiny.</span>"</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q10" value="A">A. All are important / and must be reasonably satisfied if we are</label>
+                <label class="option-item"><input type="radio" name="q10" value="B">B. All are important and must be reasonably satisfied / if we are to fulfill our biological destiny</label>
+                <label class="option-item"><input type="radio" name="q10" value="C">C. All are important and must be / reasonably satisfied if we are to fulfill our biological destiny</label>
+                <label class="option-item"><input type="radio" name="q10" value="D">D. All are important and must be reasonably satisfied if we are / to fulfill our biological destiny</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ✅：前半句为逻辑完整且共享主语的复合主句意群，后半句由从属连词“if”引领独立的状语修饰块，在此断句完全符合高级英语解析的语义群构建。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(4)">Verify Research Part 4</button>
+        <div class="msg-box" id="msg-4"></div>
+    </div>
+
+    <div class="part-card locked" id="part-5">
+        <h2 class="part-title">✍️ Part 5: Vocabulary Substitution</h2>
+        
+        <div class="question-block" id="q11" data-type="multiple" data-ans="A,C,D">
+            <p class="question-text">Q11. Which words can replace the highlighted text in an academic context?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are <span class="focus-token">important</span> and must be reasonably satisfied if we are to fulfill our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="checkbox" name="q11" value="A">A. essential</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="B">B. dispensable</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="C">C. significant</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="D">D. crucial</label>
+                <label class="option-item"><input type="checkbox" name="q11" value="E">E. optional</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> A, C, D ✅：在学术文章中，essential（必不可少的）、significant（有重大意义的）、crucial（关键至极的）均是升级重要性的地道词汇。B（可有可无）与 E（随意的/选修的）改变了原文原意。</div>
+        </div>
+
+        <div class="question-block" id="q12" data-type="multiple" data-ans="B,C">
+            <p class="question-text">Q12. Which phrases can adequately replace the highlighted group?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and <span class="focus-token">must be reasonably satisfied</span> if we are to fulfill our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="checkbox" name="q12" value="A">A. must be completely and limitlessly fulfilled</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="B">B. ought to be appropriately met without going to extremes</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="C">C. should be satisfied in a balanced and moderate manner</label>
+                <label class="option-item"><input type="checkbox" name="q12" value="D">D. can be temporarily overlooked or ignored</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B, C ✅：均契合“适度满足、避免过度”的核心。A（毫无限制地完全满足）走向极端，D（暂时忽视）不符原文强烈的道义与生存必然性。</div>
+        </div>
+
+        <div class="question-block" id="q13" data-type="single" data-ans="A">
+            <p class="question-text">Q13. In terms of contextual meaning, which phrase is closest to the highlighted concept?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to fulfill our <span class="focus-token">biological destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q13" value="A">A. live a normal life as a human being</label>
+                <label class="option-item"><input type="radio" name="q13" value="B">B. accumulate substantial material wealth</label>
+                <label class="option-item"><input type="radio" name="q13" value="C">C. climb to the top of the social hierarchy</label>
+                <label class="option-item"><input type="radio" name="q13" value="D">D. bypass our natural limitations</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> A ✅：符合文章人文主义视野下对“过上正常且完整的人类生活”的定义。B、C 属于资本与社会学层面的过度解读。</div>
+        </div>
+
+        <div class="question-block" id="q13_1" data-type="multiple" data-ans="A,C,E">
+            <p class="question-text">Q13.1 Which elements can serve as robust and contextually accurate academic substitutes for the verb?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to <span class="focus-token">fulfill</span> our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="checkbox" name="q13_1" value="A">A. achieve</label>
+                <label class="option-item"><input type="checkbox" name="q13_1" value="B">B. neglect</label>
+                <label class="option-item"><input type="checkbox" name="q13_1" value="C">C. realize</label>
+                <label class="option-item"><input type="checkbox" name="q13_1" value="D">D. abandon</label>
+                <label class="option-item"><input type="checkbox" name="q13_1" value="E">E. attain</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> A, C, E ✅：在高级论述文体中，achieve（达成）、realize（实现）、attain（企及/获取）皆能够同使命、目的（destiny, purpose, mission）形成极佳的学术搭配。B（疏忽）与 D（彻底遗弃）完全偏离。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(5)">Verify Research Part 5</button>
+        <div class="msg-box" id="msg-5"></div>
+    </div>
+
+    <div class="part-card locked" id="part-6">
+        <h2 class="part-title">🧩 Part 6: Formality and Register</h2>
+        
+        <div class="question-block" id="q14" data-type="multiple" data-ans="A,B,D">
+            <p class="question-text">Q14. Which expressions can validly rephrase the highlighted words across different registers?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to <span class="focus-token">fulfill our biological destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="checkbox" name="q14" value="A">A. achieve our natural purpose</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="B">B. live a normal human life</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="C">C. act on pure animalistic instincts</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="D">D. complete our biological mission</label>
+                <label class="option-item"><input type="checkbox" name="q14" value="E">E. get everything we desire</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> A, B, D ✅：这些表达在书面、中性、通俗场景中分别达到了准确传达内涵的要求。C 过于强调野蛮本能，E 沦为市井口语欲望。</div>
+        </div>
+
+        <div class="question-block" id="q15" data-type="single" data-ans="C">
+            <p class="question-text">Q15. Which of the following represents the most INFORMAL (conversational) expression?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to <span class="focus-token">fulfill our biological destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q15" value="A">A. fulfill our biological destiny</label>
+                <label class="option-item"><input type="radio" name="q15" value="B">B. achieve our natural purpose</label>
+                <label class="option-item"><input type="radio" name="q15" value="C">C. live a normal human life</label>
+                <label class="option-item"><input type="radio" name="q15" value="D">D. complete our biological mission</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> C ✅：使用了最常见的日常动词（live）与高频口语词（normal life），毫无学术词缀门槛，属于非正式日常交流体（Informal Register）。</div>
+        </div>
+
+        <div class="question-block" id="q16" data-type="single" data-ans="C">
+            <p class="question-text">Q16. Which of the following is the most FORMAL / Academic expression?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to <span class="focus-token">fulfill our biological destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q16" value="A">A. live a normal human life</label>
+                <label class="option-item"><input type="radio" name="q16" value="B">B. follow our basic instincts</label>
+                <label class="option-item"><input type="radio" name="q16" value="C">C. fulfill our biological imperative</label>
+                <label class="option-item"><input type="radio" name="q16" value="D">D. get what we want from life</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> C ✅：“Imperative” 意味着带有进化本能必然性、势在必行的核心规则，较之原句的 destiny 更具自然科学论文的高级感与严谨学术腔（Academic Register）。</div>
+        </div>
+
+        <div class="question-block" id="q17" data-type="single" data-ans="A">
+            <p class="question-text">Q17. Match the given expressions with their correct registers:<br>
+            (1) live a normal human life &nbsp;|&nbsp; (2) achieve our natural purpose &nbsp;|&nbsp; (3) fulfill our biological destiny<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be reasonably satisfied if we are to <span class="focus-token">fulfill our biological destiny</span>."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q17" value="A">A. 1 – Informal,  2 – Neutral,  3 – Formal</label>
+                <label class="option-item"><input type="radio" name="q17" value="B">B. 1 – Neutral,  2 – Informal,  3 – Formal</label>
+                <label class="option-item"><input type="radio" name="q17" value="C">C. 1 – Formal,  2 – Neutral,  3 – Informal</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> A ✅：绝佳的语域阶梯切分——(1) 为毫无门槛的世俗白话口语；(2) 跨入端庄的中性正式书面语；(3) 则是修辞厚重、蕴含张力的经典学术/文学宏大文本。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(6)">Verify Research Part 6</button>
+        <div class="msg-box" id="msg-6"></div>
+    </div>
+
+    <div class="part-card locked" id="part-7">
+        <h2 class="part-title">🧠 Part 7: Guided Paraphrasing Practice</h2>
+        
+        <div class="question-block" id="q18" data-type="multiple" data-ans="A,B">
+            <p class="question-text">Q18. Which of the following sentence frameworks successfully and accurately complete the paraphrase of the original sentence?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"<span class="focus-token">All are important and must be reasonably satisfied if we are to fulfill our biological destiny.</span>"</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="checkbox" name="q18" value="A">A. All these requirements are vital and ought to be moderately met if we intend to lead a normal human life.</label>
+                <label class="option-item"><input type="checkbox" name="q18" value="B">B. Every single one of these needs is essential and must be adequately fulfilled for us to achieve our natural purpose.</label>
+                <label class="option-item"><input type="checkbox" name="q18" value="C">C. These diverse desires are optional and should be fully indulged so that we can become highly successful.</label>
+                <label class="option-item"><input type="checkbox" name="q18" value="D">D. All these needs are secondary and can be completely ignored if we want to ensure basic survival.</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> A, B ✅：两组选项均跳出了生搬硬套原词的低级拼凑圈。A 用 vital、moderately met、lead a normal life 完美平替；B 采用 every single one、adequately fulfilled、natural purpose 高清复刻了原文骨架，皆是卓越的改写典范。</div>
+        </div>
+
+        <div class="question-block" id="q19" data-type="single" data-ans="A">
+            <p class="question-text">Q19. Sentence Transformation: Which of the following options represents a grammatically correct and semantically accurate inversion/restructuring of the sentence?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"<span class="focus-token">All are important and must be reasonably satisfied if we are to fulfill our biological destiny.</span>"</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q19" value="A">A. In order to achieve our natural purpose as human beings, every essential need must be met in a moderate and balanced manner.</label>
+                <label class="option-item"><input type="radio" name="q19" value="B">B. In order to satisfy all needs completely, we must fulfill our biological destiny as a prerequisite.</label>
+                <label class="option-item"><input type="radio" name="q19" value="C">C. Fulfilling our biological destiny is important in order to reasonably satisfy all human activities.</label>
+                <label class="option-item"><input type="radio" name="q19" value="D">D. We must live a normal human life in order to make all needs become important and satisfied.</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> A ✅：此项不仅完成了高质量的近义升级，更是打破原有陈述习惯，将目的状语（In order to...）前置，倒挂逻辑线，在逻辑完全守恒的前提下实现了高级的语法重构。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(7)">Verify Research Part 7</button>
+        <div class="msg-box" id="msg-7"></div>
+    </div>
+
+    <div class="part-card locked" id="part-8">
+        <h2 class="part-title">✨ Part 8: Capstone Competence Evaluation</h2>
+        
+        <div class="question-block" id="q20" data-type="single" data-ans="B">
+            <p class="question-text">Q20. Which of the following represents the BEST, most professional, and most accurate paraphrase of the original sentence?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"<span class="focus-token">All are important and must be reasonably satisfied if we are to fulfill our biological destiny.</span>"</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q20" value="A">A. All needs must be fully satisfied without any restrictions or boundaries.</label>
+                <label class="option-item"><input type="radio" name="q20" value="B">B. All these needs are important and should be reasonably satisfied (but not overindulged) if we want to live a normal life as a human being.</label>
+                <label class="option-item"><input type="radio" name="q20" value="C">C. Since all needs are essential, we must satisfy them excessively to fulfill our personal human dreams.</label>
+                <label class="option-item"><input type="radio" name="q20" value="D">D. Living a normal life means we can successfully bypass satisfying any of our underlying biological needs.</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ✅：融入标准学术参考规范改写句，清晰表明需求的不可或缺、适度性限度（即不沉溺放纵）以及活出正常生命价值的底层核心。</div>
+        </div>
+
+        <div class="question-block" id="q21" data-type="single" data-ans="B">
+            <p class="question-text">Q21. Error Analysis: Which of the following paraphrases is INCORRECT because it fundamentally distorts the original meaning?<span class="status-indicator"></span></p>
+            <div class="context-sentence-box">
+                <span class="context-label">Original Context Under Review:</span>
+                <p class="context-text">"All are important and must be <span class="focus-token">reasonably</span> satisfied if we are to fulfill our biological destiny."</p>
+            </div>
+            <ul class="options-list">
+                <label class="option-item"><input type="radio" name="q21" value="A">A. All needs should be satisfied in a sensible, non-extreme way.</label>
+                <label class="option-item"><input type="radio" name="q21" value="B">B. All needs should be met excessively and without restraint.</label>
+                <label class="option-item"><input type="radio" name="q21" value="C">C. Human needs must be balanced rather than neglected.</label>
+                <label class="option-item"><input type="radio" name="q21" value="D">D. Every single need matters for our lifecycle.</label>
+            </ul>
+            <div class="explanation"><strong>🧑‍🏫 Explanation:</strong> B ❌：此题要求抓取有硬伤的错误改写。B 项擅自将合理（reasonably）扭曲为过度且不加克制（excessively and without restraint），大谬。</div>
+        </div>
+
+        <button class="btn" onclick="checkPart(8)">Submit Final Mission</button>
+        <div class="msg-box" id="msg-8"></div>
+    </div>
+</div>
+
+<script>
+    // 跟踪各个Part的提交次数：1 = 首次提交（校对自查模式），2 = 第二次提交（强制解锁并显示正解分析）
+    const partAttempts = { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1 };
+    const totalParts = 8;
+
+    function checkPart(partNum) {
+        const partCard = document.getElementById(`part-${partNum}`);
+        const qBlocks = partCard.querySelectorAll('.question-block');
+        const msgBox = document.getElementById(`msg-${partNum}`);
+        
+        let partAllCorrect = true;
+        let unanswered = false;
+
+        // 1. 答案收集与多选/单选精确算法比对
+        qBlocks.forEach(block => {
+            const type = block.getAttribute('data-type');
+            const targetAns = block.getAttribute('data-ans');
+            const indicator = block.querySelector('.status-indicator');
+            let userAns = [];
+
+            if (type === 'single') {
+                const checked = block.querySelector('input[type="radio"]:checked');
+                if (checked) userAns.push(checked.value);
+            } else if (type === 'multiple') {
+                const checkeds = block.querySelectorAll('input[type="checkbox"]:checked');
+                checkeds.forEach(c => userAns.push(c.value));
+            }
+
+            if (userAns.length === 0) {
+                unanswered = true;
+                return;
+            }
+
+            let isCorrect = false;
+            if (type === 'single') {
+                isCorrect = (userAns[0] === targetAns);
+            } else {
+                const targetAnsArray = targetAns.split(',').sort();
+                const userAnsArray = userAns.sort();
+                isCorrect = (targetAnsArray.length === userAnsArray.length && targetAnsArray.every((v, i) => v === userAnsArray[i]));
+            }
+
+            // 动态反馈类名注入
+            if (!isCorrect) {
+                partAllCorrect = false;
+                block.className = "question-block wrong-q";
+                indicator.textContent = " 🔴 (Incorrect)";
+                indicator.style.color = "var(--error)";
+            } else {
+                block.className = "question-block right-q";
+                indicator.textContent = " 🟢 (Correct)";
+                indicator.style.color = "var(--success)";
+            }
+        });
+
+        if (unanswered) {
+            msgBox.textContent = "⚠️ Please complete all observations in this section before verifying!";
+            msgBox.className = "msg-box warning";
+            msgBox.style.display = "block";
+            return;
+        }
+
+        // 2. 双重递进式学术防呆解锁逻辑
+        if (partAttempts[partNum] === 1) {
+            if (partAllCorrect) {
+                msgBox.textContent = "🎉 Outstanding! Flawless deduction on your first attempt!";
+                msgBox.className = "msg-box success";
+                msgBox.style.display = "block";
+                revealExplanations(partCard, qBlocks);
+                unlockNextPart(partNum);
+            } else {
+                msgBox.textContent = "❌ Logic mismatch detected in the lab! Review the red markers, re-evaluate your linguistic schema, and revise.";
+                msgBox.className = "msg-box warning";
+                msgBox.style.display = "block";
+                partAttempts[partNum] = 2; // 升级为最终终核模式
+            }
+        } else if (partAttempts[partNum] === 2) {
+            revealExplanations(partCard, qBlocks);
+            if (partAllCorrect) {
+                msgBox.textContent = "🟢 Target locked! All answers are now aligned perfectly.";
+                msgBox.className = "msg-box success";
+            } else {
+                msgBox.textContent = "📘 Review Mode: Some vectors remained mismatched. Teacher analysis and absolute keys have been unlocked below.";
+                msgBox.className = "msg-box warning";
+            }
+            msgBox.style.display = "block";
+            unlockNextPart(partNum);
+        }
+    }
+
+    function revealExplanations(partCard, qBlocks) {
+        qBlocks.forEach(block => {
+            const targetAns = block.getAttribute('data-ans');
+            const targetAnsArray = targetAns.split(',');
+
+            const inputs = block.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.disabled = true; // 锁定不许再篡改
+                if (targetAnsArray.includes(input.value)) {
+                    input.parentElement.classList.add('correct-choice'); // 涂绿正确骨干项
+                }
+            });
+
+            const exp = block.querySelector('.explanation');
+            if (exp) exp.style.display = "block";
+        });
+
+        const actionBtn = partCard.querySelector('.btn');
+        if (actionBtn) actionBtn.disabled = true;
+    }
+
+    function unlockNextPart(currentPartNum) {
+        // 计算平滑增长进度条
+        const currentProgress = (currentPartNum / totalParts) * 100;
+        document.getElementById('lab-progress').style.width = currentProgress + '%';
+        
+        const nextPartNum = currentPartNum + 1;
+        const nextPartCard = document.getElementById(`part-${nextPartNum}`);
+        if (nextPartCard) {
+            nextPartCard.classList.remove('locked');
+            setTimeout(() => {
+                nextPartCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 400);
+        } else if (currentPartNum === totalParts) {
+            triggerConfettiEffect();
+            setTimeout(() => {
+                alert("🏆 CONGRATULATIONS! You have successfully decoded and mastered the semantic structure of the text!");
+            }, 500);
+        }
+    }
+
+    // 原生无第三方依赖的粒子碰撞五彩纸屑庆祝动效
+    function triggerConfettiEffect() {
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        let confettiArray = Array.from({ length: 150 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            color: `hsl(${Math.random() * 360}, 85%, 60%)`,
+            size: Math.random() * 8 + 5,
+            speedY: Math.random() * 4 + 3,
+            speedX: Math.random() * 2 - 1
+        }));
+
+        let animationFrameId;
+        let framesRun = 0;
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiArray.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                p.y += p.speedY;
+                p.x += p.speedX;
+                if (p.y > canvas.height) p.y = -10;
+            });
+            framesRun++;
+            if (framesRun < 220) {
+                animationFrameId = requestAnimationFrame(animateConfetti);
+            } else {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                cancelAnimationFrame(animationFrameId);
+            }
+        }
+        animateConfetti();
+    }
+</script>
+
+</body>
+</html>
