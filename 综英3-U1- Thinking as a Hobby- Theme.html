@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+  <title>Unit 1 · Thinking as a Hobby · Theme Analysis</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #f5f9f0;
+      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      color: #1e2a3a;
+    }
+    .app-container {
+      max-width: 1100px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 16px 40px -12px rgba(30, 50, 30, 0.15);
+      border: 1px solid #dce8d5;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      position: relative;
+      min-height: 600px;
+    }
+    .hamburger {
+      position: absolute;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 30;
+      background: #f4faf0;
+      border: 1px solid #c8dbc0;
+      border-radius: 40px;
+      padding: 0.3rem 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2a4a3a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      line-height: 1.4;
+      transition: 0.15s;
+    }
+    .hamburger:hover {
+      background: #e8f3e0;
+      border-color: #a8c89a;
+    }
+    .hamburger .icon {
+      font-size: 1.3rem;
+    }
+    .sidebar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100%;
+      background: #f6faf3;
+      border-right: 1px solid #dce8d5;
+      padding: 3.5rem 0.8rem 1.5rem 1.2rem;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+      z-index: 20;
+      overflow-y: auto;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.03);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+    .sidebar-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.06);
+      z-index: 15;
+      display: none;
+    }
+    .sidebar-overlay.show {
+      display: block;
+    }
+    .sidebar .logo {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #2a5a3a;
+      padding-bottom: 1.2rem;
+      border-bottom: 2px solid #dce8d5;
+      margin-bottom: 0.6rem;
+      line-height: 1.3;
+    }
+    .sidebar .logo .title {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: #4a7a5a;
+      margin-top: 0.1rem;
+    }
+    .sidebar .logo span {
+      background: #c8e0c0;
+      padding: 0.1rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #1a3a2a;
+      margin-left: 0.3rem;
+    }
+    .nav-btn {
+      background: transparent;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #3a5a4a;
+      cursor: pointer;
+      transition: 0.15s;
+      font-family: inherit;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-left: 3px solid transparent;
+    }
+    .nav-btn .num {
+      display: inline-block;
+      min-width: 22px;
+      height: 22px;
+      background: #dce8d5;
+      color: #2a4a3a;
+      border-radius: 30px;
+      text-align: center;
+      line-height: 22px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .nav-btn:hover {
+      background: #e8f3e0;
+      border-left-color: #a8c89a;
+    }
+    .nav-btn.active {
+      background: #e0efe0;
+      border-left-color: #7ab87a;
+      color: #1a3a2a;
+      font-weight: 600;
+    }
+    .nav-btn.active .num {
+      background: #7ab87a;
+      color: #fff;
+    }
+    .content {
+      flex: 1;
+      padding: 2.2rem 2.4rem 2.4rem 2.4rem;
+      overflow-y: auto;
+      background: #fff;
+      width: 100%;
+      position: relative;
+    }
+    .content-inner {
+      margin-top: 1.8rem;
+    }
+    .section {
+      display: none;
+      animation: fade 0.25s ease-out;
+    }
+    .section.active {
+      display: block;
+    }
+    @keyframes fade {
+      0% { opacity: 0.4; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1a4a2a;
+      border-left: 6px solid #7ab87a;
+      padding-left: 1rem;
+      margin-bottom: 0.8rem;
+    }
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #2a5a3a;
+      margin: 1.2rem 0 0.4rem 0;
+    }
+    p, li {
+      font-size: 1.0rem;
+      line-height: 1.7;
+      color: #1e2e2a;
+      margin-bottom: 0.5rem;
+    }
+    .highlight-box {
+      background: #f4faf3;
+      border-radius: 20px;
+      padding: 1.2rem 1.8rem;
+      border-left: 6px solid #7ab87a;
+      margin: 1rem 0;
+      box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.7);
+    }
+    .task-box {
+      background: #f8fbf7;
+      border-radius: 24px;
+      padding: 1.4rem 1.8rem;
+      margin: 1.2rem 0;
+      border: 1px solid #dce8d5;
+    }
+    .task-box label {
+      font-weight: 600;
+      color: #1a4a2a;
+      display: block;
+      margin-bottom: 0.3rem;
+      font-size: 1.0rem;
+    }
+    .gloss {
+      color: #5a7a6a;
+      font-size: 0.82rem;
+      background: #eef5ea;
+      padding: 0.1rem 0.5rem;
+      border-radius: 12px;
+      margin-left: 0.2rem;
+    }
+    .gloss::before {
+      content: "（";
+    }
+    .gloss::after {
+      content: "）";
+    }
+    .quiz-option {
+      display: block;
+      padding: 0.4rem 0.8rem;
+      margin: 0.3rem 0;
+      background: #f8fbf7;
+      border-radius: 12px;
+      border: 1px solid #dce8d5;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .quiz-option:hover {
+      background: #e8f3e0;
+      border-color: #a8c89a;
+    }
+    .quiz-option input[type="radio"],
+    .quiz-option input[type="checkbox"] {
+      margin-right: 0.6rem;
+      accent-color: #7ab87a;
+    }
+    .quiz-option.correct {
+      background: #d4edda;
+      border-color: #7ab87a;
+    }
+    .quiz-option.wrong {
+      background: #f8dddd;
+      border-color: #d47a7a;
+    }
+    .btn-check {
+      background: #c8e0c0;
+      border: 1px solid #a8c89a;
+      color: #1a4a2a;
+      padding: 0.25rem 1.6rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      transition: 0.15s;
+      display: inline-block;
+      font-family: inherit;
+    }
+    .btn-check:hover {
+      background: #b0d8a8;
+      border-color: #7ab87a;
+      transform: scale(0.97);
+    }
+    .quiz-feedback {
+      background: #f0f7ed;
+      border-radius: 16px;
+      padding: 0.6rem 1.2rem;
+      margin-top: 0.6rem;
+      border-left: 4px solid #7ab87a;
+      display: none;
+    }
+    .quiz-feedback.show {
+      display: block;
+    }
+    .quiz-feedback .correct-msg {
+      color: #2a7a3a;
+      font-weight: 600;
+    }
+    .quiz-feedback .wrong-msg {
+      color: #b04a4a;
+      font-weight: 600;
+    }
+    table.fill-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #f8fbf7;
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 0.95rem;
+      margin: 0.4rem 0;
+    }
+    table.fill-table th {
+      background: #dce8d5;
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      font-weight: 600;
+      color: #1a3a2a;
+    }
+    table.fill-table td {
+      padding: 0.3rem 0.6rem;
+      border-top: 1px solid #dce8d5;
+      vertical-align: middle;
+    }
+    table.fill-table select {
+      padding: 0.2rem 0.4rem;
+      border-radius: 30px;
+      border: 1px solid #c8dbc0;
+      font-size: 0.9rem;
+      background: #fff;
+      font-family: inherit;
+      min-width: 120px;
+    }
+    table.fill-table select:focus {
+      outline: 2px solid #7ab87a;
+    }
+    .table-correct {
+      background: #d4edda !important;
+    }
+    .table-wrong {
+      background: #f8dddd !important;
+    }
+    .transition-text {
+      background: #f4faf3;
+      border-radius: 16px;
+      padding: 0.8rem 1.4rem;
+      margin: 0.6rem 0 0 0;
+      font-style: italic;
+      color: #2a5a3a;
+      border-left: 4px solid #7ab87a;
+      font-size: 0.95rem;
+    }
+    .page-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid #dce8d5;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .page-nav .prev,
+    .page-nav .next {
+      background: #f0f7ed;
+      border: 1px solid #c8dbc0;
+      border-radius: 40px;
+      padding: 0.4rem 1.6rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #1a4a2a;
+      cursor: pointer;
+      transition: 0.15s;
+      font-family: inherit;
+    }
+    .page-nav .prev:hover,
+    .page-nav .next:hover {
+      background: #e0efe0;
+      border-color: #a8c89a;
+    }
+    .page-nav .prev:disabled,
+    .page-nav .next:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .page-nav .page-indicator {
+      font-size: 0.9rem;
+      color: #5a7a6a;
+      font-weight: 500;
+    }
+    .student-name-input {
+      margin-bottom: 1.2rem;
+      padding: 0.8rem 1.2rem;
+      background: #f4faf3;
+      border-radius: 20px;
+      border: 1px solid #dce8d5;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .student-name-input label {
+      font-weight: 600;
+      color: #1a4a2a;
+    }
+    .student-name-input .name-display {
+      font-weight: 600;
+      color: #1a4a2a;
+    }
+    .btn-reset {
+      background: #d4a87a;
+      border: none;
+      color: #fff;
+      padding: 0.3rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-reset:hover {
+      background: #c8986a;
+    }
+    .submit-final {
+      background: #2a5a3a;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 2.5rem;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 1rem;
+      transition: 0.15s;
+    }
+    .submit-final:hover {
+      background: #1a4a2a;
+      box-shadow: 0 4px 12px rgba(30, 60, 30, 0.2);
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-box {
+      background: #fff;
+      max-width: 500px;
+      width: 90%;
+      padding: 2rem;
+      border-radius: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .modal-box .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #5a7a6a;
+    }
+    .modal-box .report-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.2rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    .modal-box .report-item .status.done {
+      color: #2a7a3a;
+      font-weight: 600;
+    }
+    .modal-box .report-item .status.pending {
+      color: #c07a3a;
+      font-weight: 600;
+    }
+    @media (max-width: 700px) {
+      .app-container {
+        flex-direction: column;
+        border-radius: 28px;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #dce8d5;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 0.6rem 0.4rem;
+        gap: 0.05rem;
+        background: #f6faf3;
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .sidebar .logo {
+        width: 100%;
+        padding-bottom: 0.3rem;
+        margin-bottom: 0.2rem;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #dce8d5;
+      }
+      .nav-btn {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.65rem;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        border-radius: 6px;
+      }
+      .nav-btn .num {
+        min-width: 16px;
+        height: 16px;
+        line-height: 16px;
+        font-size: 0.55rem;
+      }
+      .nav-btn.active {
+        border-left: none;
+        border-bottom-color: #7ab87a;
+      }
+      .content {
+        padding: 1.2rem 1rem;
+      }
+      .content-inner {
+        margin-top: 2.4rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      .page-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.4rem;
+      }
+      .page-nav .prev,
+      .page-nav .next {
+        justify-content: center;
+      }
+      .student-name-input {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      table.fill-table {
+        font-size: 0.82rem;
+      }
+      table.fill-table select {
+        min-width: 80px;
+        font-size: 0.8rem;
+      }
+    }
+    @media (min-width: 701px) {
+      .sidebar {
+        position: relative;
+        transform: translateX(0);
+        width: 220px;
+        height: auto;
+        box-shadow: none;
+        border-right: 1px solid #dce8d5;
+        padding: 2rem 0.8rem 1.5rem 1.2rem;
+      }
+      .sidebar-overlay {
+        display: none !important;
+      }
+      .hamburger {
+        display: none;
+      }
+      .content-inner {
+        margin-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+
+  <button class="hamburger" id="hamburgerBtn"><span class="icon">☰</span> Menu</button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <nav class="sidebar" id="sidebar">
+    <div class="logo">
+      🌿 Unit 1 · Thinking as a Hobby
+      <span class="title">Theme Analysis · 主题分析</span>
+    </div>
+    <button class="nav-btn active" data-section="sec0"><span class="num">1.0</span> Three Concepts</button>
+    <button class="nav-btn" data-section="sec1"><span class="num">1.1</span> Subject</button>
+    <button class="nav-btn" data-section="sec2"><span class="num">1.2</span> Main Idea</button>
+    <button class="nav-btn" data-section="sec3"><span class="num">1.3</span> Find the Theme</button>
+    <button class="nav-btn" data-section="sec4"><span class="num">1.4</span> Common Mistakes</button>
+    <button class="nav-btn" data-section="sec5"><span class="num">1.5</span> Self‑Check</button>
+    <button class="nav-btn" data-section="sec6"><span class="num">1.6</span> Report</button>
+  </nav>
+
+  <div class="content" id="content">
+    <div class="content-inner">
+
+      <!-- 姓名 -->
+      <div class="student-name-input" id="nameDisplayArea">
+        <label>👤 Student:</label>
+        <span class="name-display" id="displayName">(not set)</span>
+        <button class="btn-check" id="changeNameBtn" style="margin-left:auto; padding:0.15rem 1rem;">Change Name</button>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- 板块 1.0：Three Concepts -->
+      <!-- ======================================== -->
+      <div id="section-sec0" class="section active">
+        <h2>▍ 1.0 Three Concepts — Quick Clarification</h2>
+        <div class="highlight-box">
+          <p>Before we begin, let's quickly distinguish three terms that are often confused:</p>
+          <table style="width:100%; border-collapse:collapse; margin-top:0.6rem; font-size:0.95rem; background:#f8fbf7; border-radius:12px; overflow:hidden;">
+            <tr style="background:#dce8d5;"><th style="padding:0.4rem 0.6rem; text-align:left;">Concept</th><th style="padding:0.4rem 0.6rem; text-align:left;">Form</th><th style="padding:0.4rem 0.6rem; text-align:left;">Example</th></tr>
+            <tr><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;"><strong>Subject</strong> <span class="gloss">话题</span></td><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;">A word or short phrase</td><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;"><em>“Thinking”</em></td></tr>
+            <tr><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;"><strong>Main Idea</strong> <span class="gloss">主旨</span></td><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;">A complete sentence</td><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;"><em>“Golding reveals that most people mistake feeling for thought, while genuine thinking is rare and demanding.”</em></td></tr>
+            <tr><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;"><strong>Theme</strong> <span class="gloss">主题</span></td><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;">A noun phrase (often a pair of opposing concepts)</td><td style="padding:0.3rem 0.6rem; border-top:1px solid #dce8d5;"><em>“Genuine thinking vs. pseudo‑thinking”</em></td></tr>
+          </table>
+        </div>
+        <p style="font-size:0.95rem;">💡 <strong>Key rule:</strong> If your theme is a complete sentence, you're probably writing the Main Idea. A theme should be a <strong>noun phrase</strong> — ideally a pair of opposing concepts, because literature is built on conflict and tension.</p>
+
+        <div class="task-box">
+          <label>📝 Quick Check — Which is Which?</label>
+          <p style="font-size:0.95rem;">Read each statement and decide whether it is a <strong>Subject</strong>, <strong>Main Idea</strong>, or <strong>Theme</strong>.</p>
+          <div id="quiz0">
+            <div class="quiz-option"><input type="radio" name="q0" value="subject"> <strong>“Thinking.”</strong></div>
+            <div class="quiz-option"><input type="radio" name="q0" value="mainidea"> <strong>“Golding reveals that most people mistake feeling for thought...”</strong></div>
+            <div class="quiz-option"><input type="radio" name="q0" value="theme"> <strong>“Genuine thinking vs. pseudo‑thinking.”</strong></div>
+          </div>
+          <button class="btn-check" id="checkQ0">Check</button>
+          <div id="feedback0" class="quiz-feedback"></div>
+        </div>
+
+        <div class="transition-text">📌 明确了三个概念的区别后，我们来看看这篇文章的 Subject 是什么。</div>
+        <div class="page-nav">
+          <button class="prev" disabled>← Previous</button>
+          <span class="page-indicator">1 / 7</span>
+          <button class="next" data-next="sec1">Next →</button>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- 板块 1.1：Subject -->
+      <!-- ======================================== -->
+      <div id="section-sec1" class="section">
+        <div class="transition-text">🔁 接上一页：你已经理解了三个概念的基本区分。现在我们先确认这篇文章的 Subject。</div>
+        <h2>▍ 1.1 The Subject of This Essay</h2>
+        <div class="highlight-box">
+          <p>The subject of this essay is <strong>thinking</strong> — how people think, how they <em>believe</em> they think, and what distinguishes genuine thought from its imitations.</p>
+          <p style="margin-top:0.3rem;">This is what the essay is <strong>about</strong> on the surface.</p>
+        </div>
+        <div class="task-box">
+          <label>📝 Check Your Understanding</label>
+          <p style="font-size:0.95rem;">Which of the following is the <strong>Subject</strong> of this essay?</p>
+          <div id="quiz1">
+            <div class="quiz-option"><input type="radio" name="q1" value="a"> A. “Golding criticizes people who think with their necks.”</div>
+            <div class="quiz-option"><input type="radio" name="q1" value="b"> B. “Thinking.”</div>
+            <div class="quiz-option"><input type="radio" name="q1" value="c"> C. “Genuine thinking vs. pseudo‑thinking.”</div>
+            <div class="quiz-option"><input type="radio" name="q1" value="d"> D. “The scarcity of genuine thinking.”</div>
+          </div>
+          <button class="btn-check" id="checkQ1">Check</button>
+          <div id="feedback1" class="quiz-feedback"></div>
+        </div>
+
+        <div class="transition-text">📖 确认了 Subject 之后，我们来回顾一下 Main Idea，因为它是我们提炼 Theme 的起点。</div>
+        <div class="page-nav">
+          <button class="prev" data-prev="sec0">← Previous</button>
+          <span class="page-indicator">2 / 7</span>
+          <button class="next" data-next="sec2">Next →</button>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- 板块 1.2：Main Idea -->
+      <!-- ======================================== -->
+      <div id="section-sec2" class="section">
+        <div class="transition-text">🔙 接上一页：我们已经确认了 Subject。现在，回顾一下这篇文章的 Main Idea。</div>
+        <h2>▍ 1.2 The Main Idea of This Essay (Review)</h2>
+        <div class="highlight-box">
+          <p>From our previous study, the Main Idea is:</p>
+          <p style="font-style:italic; font-size:1.05rem; background:#f8fbf7; padding:0.8rem 1.2rem; border-radius:16px; margin-top:0.4rem;">“Golding reveals that most people mistake feeling and prejudice for thought, while genuine thinking is rare and demanding. He concludes, with quiet understatement, that true thinking is a serious lifelong commitment — not a casual hobby.”</p>
+          <p style="margin-top:0.4rem;">This is the author's <strong>specific message</strong> in this essay. It contains Golding's judgment about the subject.</p>
+          <p style="margin-top:0.2rem; font-style:italic; color:#2a5a3a;">Now we move from <strong>what Golding says</strong> (Main Idea) to <strong>what human experience the text explores</strong> (Theme).</p>
+        </div>
+        <div class="task-box">
+          <label>📝 Check Your Understanding</label>
+          <p style="font-size:0.95rem;">Which of the following is the <strong>Main Idea</strong> of this essay?</p>
+          <div id="quiz2">
+            <div class="quiz-option"><input type="radio" name="q2" value="a"> A. “Thinking.”</div>
+            <div class="quiz-option"><input type="radio" name="q2" value="b"> B. “Golding reveals that most people mistake feeling and prejudice for thought, while genuine thinking is rare and demanding.”</div>
+            <div class="quiz-option"><input type="radio" name="q2" value="c"> C. “Genuine thinking vs. pseudo‑thinking.”</div>
+            <div class="quiz-option"><input type="radio" name="q2" value="d"> D. “The scarcity of genuine thinking.”</div>
+          </div>
+          <button class="btn-check" id="checkQ2">Check</button>
+          <div id="feedback2" class="quiz-feedback"></div>
+        </div>
+
+        <div class="transition-text">🧭 现在，我们从 Main Idea 出发，一步一步提炼出这篇文章的 Theme。</div>
+        <div class="page-nav">
+          <button class="prev" data-prev="sec1">← Previous</button>
+          <span class="page-indicator">3 / 7</span>
+          <button class="next" data-next="sec3">Next →</button>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- 板块 1.3：Find the Theme -->
+      <!-- ======================================== -->
+      <div id="section-sec3" class="section">
+        <div class="transition-text">🔍 接上一页：现在进入核心——如何从 Main Idea 出发，提炼出 Theme。</div>
+        <h2>▍ 1.3 How to Discover the Theme</h2>
+
+        <h3>Step 1 — Ask: What is the central opposition?</h3>
+        <p>A theme is not a single idea. It is a <strong>relationship between two opposing forces</strong>.</p>
+        <p>To find the theme of this essay, ask:</p>
+        <blockquote style="background:#f4faf3; padding:0.6rem 1.2rem; border-radius:16px; font-style:italic; margin:0.3rem 0;">“What two opposing things does the essay constantly contrast?”</blockquote>
+
+        <p style="margin-top:0.6rem;">Look at the evidence. <strong>Fill in the blanks</strong> by selecting the correct opposition for each piece of evidence.</p>
+
+        <!-- 表格填空 1：Evidence → Opposition -->
+        <div class="task-box">
+          <label>📝 Task 1: Match the Evidence to the Correct Opposition</label>
+          <p style="font-size:0.9rem; color:#5a7a6a;">Select the correct opposition for each row.</p>
+          <table class="fill-table" id="oppositionTable">
+            <thead><tr><th style="width:50%;">Evidence</th><th style="width:50%;">Opposition</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Mr Houghton “thinks with his neck” vs. Grade‑one thinkers “in books”</td>
+                <td><select class="oppo-select" data-correct="feeling-logic">
+                  <option value="">— Select —</option>
+                  <option value="appearance-reality">Appearance vs. Reality</option>
+                  <option value="feeling-logic">Feeling vs. Logic</option>
+                  <option value="conformity-independence">Conformity vs. Independence</option>
+                  <option value="critique-construction">Critique vs. Construction</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>The headmaster urges “thinking” but cannot define it</td>
+                <td><select class="oppo-select" data-correct="appearance-reality">
+                  <option value="">— Select —</option>
+                  <option value="appearance-reality">Appearance vs. Reality</option>
+                  <option value="feeling-logic">Feeling vs. Logic</option>
+                  <option value="conformity-independence">Conformity vs. Independence</option>
+                  <option value="critique-construction">Critique vs. Construction</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>Group opinion (Ruth: “millions can't be wrong”) vs. independent judgment</td>
+                <td><select class="oppo-select" data-correct="conformity-independence">
+                  <option value="">— Select —</option>
+                  <option value="appearance-reality">Appearance vs. Reality</option>
+                  <option value="feeling-logic">Feeling vs. Logic</option>
+                  <option value="conformity-independence">Conformity vs. Independence</option>
+                  <option value="critique-construction">Critique vs. Construction</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>Grade‑two thinking destroys but cannot create</td>
+                <td><select class="oppo-select" data-correct="critique-construction">
+                  <option value="">— Select —</option>
+                  <option value="appearance-reality">Appearance vs. Reality</option>
+                  <option value="feeling-logic">Feeling vs. Logic</option>
+                  <option value="conformity-independence">Conformity vs. Independence</option>
+                  <option value="critique-construction">Critique vs. Construction</option>
+                </select></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-check" id="checkOpposition">Check Answers</button>
+          <div id="feedbackOpposition" class="quiz-feedback"></div>
+          <p style="margin-top:0.6rem; font-weight:600; color:#1a4a2a;">The central opposition that runs through the entire essay is:</p>
+          <p style="font-size:1.05rem; font-weight:600; color:#2a7a3a; background:#f4faf3; padding:0.2rem 1.2rem; border-radius:40px; display:inline-block;">Genuine thinking vs. Pseudo‑thinking</p>
+        </div>
+
+        <h3 style="margin-top:1.2rem;">Step 2 — Define the two sides</h3>
+        <p><strong>Fill in the blanks</strong> by selecting the correct characteristics for each side of the opposition.</p>
+
+        <!-- 表格填空 2：真思考 vs 伪思考 -->
+        <div class="task-box">
+          <label>📝 Task 2: Complete the Contrast Table</label>
+          <p style="font-size:0.9rem; color:#5a7a6a;">Select the correct characteristic for each blank.</p>
+          <table class="fill-table" id="contrastTable">
+            <thead><tr><th style="width:50%;">Genuine Thinking <span class="gloss">真思考</span></th><th style="width:50%;">Pseudo‑thinking <span class="gloss">伪思考</span></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><select class="contrast-select" data-correct="logical">
+                  <option value="">— Select —</option>
+                  <option value="logical">Logical, systematic</option>
+                  <option value="emotional">Emotional, prejudiced</option>
+                  <option value="constructive">Constructive (builds systems)</option>
+                  <option value="destructive">Destructive (only criticizes)</option>
+                  <option value="rare">Rare (“few and far between”)</option>
+                  <option value="common">Common (Grade‑three is “the most common”)</option>
+                </select></td>
+                <td><select class="contrast-select" data-correct="emotional">
+                  <option value="">— Select —</option>
+                  <option value="logical">Logical, systematic</option>
+                  <option value="emotional">Emotional, prejudiced</option>
+                  <option value="constructive">Constructive (builds systems)</option>
+                  <option value="destructive">Destructive (only criticizes)</option>
+                  <option value="rare">Rare (“few and far between”)</option>
+                  <option value="common">Common (Grade‑three is “the most common”)</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td><select class="contrast-select" data-correct="constructive">
+                  <option value="">— Select —</option>
+                  <option value="logical">Logical, systematic</option>
+                  <option value="emotional">Emotional, prejudiced</option>
+                  <option value="constructive">Constructive (builds systems)</option>
+                  <option value="destructive">Destructive (only criticizes)</option>
+                  <option value="rare">Rare (“few and far between”)</option>
+                  <option value="common">Common (Grade‑three is “the most common”)</option>
+                </select></td>
+                <td><select class="contrast-select" data-correct="destructive">
+                  <option value="">— Select —</option>
+                  <option value="logical">Logical, systematic</option>
+                  <option value="emotional">Emotional, prejudiced</option>
+                  <option value="constructive">Constructive (builds systems)</option>
+                  <option value="destructive">Destructive (only criticizes)</option>
+                  <option value="rare">Rare (“few and far between”)</option>
+                  <option value="common">Common (Grade‑three is “the most common”)</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td><select class="contrast-select" data-correct="rare">
+                  <option value="">— Select —</option>
+                  <option value="logical">Logical, systematic</option>
+                  <option value="emotional">Emotional, prejudiced</option>
+                  <option value="constructive">Constructive (builds systems)</option>
+                  <option value="destructive">Destructive (only criticizes)</option>
+                  <option value="rare">Rare (“few and far between”)</option>
+                  <option value="common">Common (Grade‑three is “the most common”)</option>
+                </select></td>
+                <td><select class="contrast-select" data-correct="common">
+                  <option value="">— Select —</option>
+                  <option value="logical">Logical, systematic</option>
+                  <option value="emotional">Emotional, prejudiced</option>
+                  <option value="constructive">Constructive (builds systems)</option>
+                  <option value="destructive">Destructive (only criticizes)</option>
+                  <option value="rare">Rare (“few and far between”)</option>
+                  <option value="common">Common (Grade‑three is “the most common”)</option>
+                </select></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-check" id="checkContrast">Check Answers</button>
+          <div id="feedbackContrast" class="quiz-feedback"></div>
+        </div>
+
+        <h3 style="margin-top:1.2rem;">Step 3 — Test the theme against the whole essay</h3>
+        <p><strong>Fill in the blanks</strong> by selecting how the opposition appears in each section.</p>
+
+        <!-- 表格填空 3：各段落中的对立表现 -->
+        <div class="task-box">
+          <label>📝 Task 3: Complete the Section Analysis</label>
+          <p style="font-size:0.9rem; color:#5a7a6a;">Select the correct description for each section.</p>
+          <table class="fill-table" id="sectionTable">
+            <thead><tr><th style="width:25%;">Section</th><th style="width:75%;">How the Opposition Appears</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Headmaster scene</td>
+                <td><select class="section-select" data-correct="symbols">
+                  <option value="">— Select —</option>
+                  <option value="symbols">He urges the boy to think, but mistakes symbols for substance — <strong>appearance vs. reality</strong>.</option>
+                  <option value="feeling">He believes he is thinking, but is ruled by feeling — <strong>feeling vs. logic</strong>.</option>
+                  <option value="critique">He criticizes others but cannot build — <strong>critique vs. construction</strong>.</option>
+                  <option value="genuine">He moves from destruction to construction — <strong>genuine vs. imitation</strong>.</option>
+                  <option value="commitment">He chooses thinking as a “profession” — <strong>commitment vs. casualness</strong>.</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>Mr Houghton (Grade‑three)</td>
+                <td><select class="section-select" data-correct="feeling">
+                  <option value="">— Select —</option>
+                  <option value="symbols">He urges the boy to think, but mistakes symbols for substance — <strong>appearance vs. reality</strong>.</option>
+                  <option value="feeling">He believes he is thinking, but is ruled by feeling — <strong>feeling vs. logic</strong>.</option>
+                  <option value="critique">He criticizes others but cannot build — <strong>critique vs. construction</strong>.</option>
+                  <option value="genuine">He moves from destruction to construction — <strong>genuine vs. imitation</strong>.</option>
+                  <option value="commitment">He chooses thinking as a “profession” — <strong>commitment vs. casualness</strong>.</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>Ruth (Grade‑two)</td>
+                <td><select class="section-select" data-correct="critique">
+                  <option value="">— Select —</option>
+                  <option value="symbols">He urges the boy to think, but mistakes symbols for substance — <strong>appearance vs. reality</strong>.</option>
+                  <option value="feeling">He believes he is thinking, but is ruled by feeling — <strong>feeling vs. logic</strong>.</option>
+                  <option value="critique">He criticizes others but cannot build — <strong>critique vs. construction</strong>.</option>
+                  <option value="genuine">He moves from destruction to construction — <strong>genuine vs. imitation</strong>.</option>
+                  <option value="commitment">He chooses thinking as a “profession” — <strong>commitment vs. casualness</strong>.</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>Aspiration to Grade‑one</td>
+                <td><select class="section-select" data-correct="genuine">
+                  <option value="">— Select —</option>
+                  <option value="symbols">He urges the boy to think, but mistakes symbols for substance — <strong>appearance vs. reality</strong>.</option>
+                  <option value="feeling">He believes he is thinking, but is ruled by feeling — <strong>feeling vs. logic</strong>.</option>
+                  <option value="critique">He criticizes others but cannot build — <strong>critique vs. construction</strong>.</option>
+                  <option value="genuine">He moves from destruction to construction — <strong>genuine vs. imitation</strong>.</option>
+                  <option value="commitment">He chooses thinking as a “profession” — <strong>commitment vs. casualness</strong>.</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>Conclusion</td>
+                <td><select class="section-select" data-correct="commitment">
+                  <option value="">— Select —</option>
+                  <option value="symbols">He urges the boy to think, but mistakes symbols for substance — <strong>appearance vs. reality</strong>.</option>
+                  <option value="feeling">He believes he is thinking, but is ruled by feeling — <strong>feeling vs. logic</strong>.</option>
+                  <option value="critique">He criticizes others but cannot build — <strong>critique vs. construction</strong>.</option>
+                  <option value="genuine">He moves from destruction to construction — <strong>genuine vs. imitation</strong>.</option>
+                  <option value="commitment">He chooses thinking as a “profession” — <strong>commitment vs. casualness</strong>.</option>
+                </select></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-check" id="checkSection">Check Answers</button>
+          <div id="feedbackSection" class="quiz-feedback"></div>
+        </div>
+
+        <h3 style="margin-top:1.2rem;">Step 4 — Formulate the theme as a paired phrase</h3>
+        <div class="highlight-box">
+          <p style="font-size:1.1rem; font-weight:600; color:#1a4a2a;">“Genuine thinking vs. pseudo‑thinking”</p>
+          <p style="margin-top:0.2rem;">More fully expressed:</p>
+          <p style="font-style:italic; background:#f8fbf7; padding:0.6rem 1.2rem; border-radius:16px;">“The scarcity of authentic intellectual engagement and the human tendency to mistake feeling, prejudice, and habit for thought.”</p>
+          <p style="margin-top:0.3rem;"><strong>Supporting themes (secondary):</strong></p>
+          <ul style="padding-left:1.5rem; font-size:0.95rem;">
+            <li>Appearance vs. reality in intellectual life <span class="gloss">表象与现实</span></li>
+            <li>Conformity vs. intellectual independence <span class="gloss">从众 vs. 独立思考</span></li>
+            <li>Self‑deception vs. self‑awareness <span class="gloss">自我欺骗 vs. 自我认知</span></li>
+          </ul>
+        </div>
+
+        <div class="transition-text">🧠 你已经完成了提炼 Theme 的四个步骤。接下来，看看同学们最容易犯的错。</div>
+        <div class="page-nav">
+          <button class="prev" data-prev="sec2">← Previous</button>
+          <span class="page-indicator">4 / 7</span>
+          <button class="next" data-next="sec4">Next →</button>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- 板块 1.4：Common Mistakes -->
+      <!-- ======================================== -->
+      <div id="section-sec4" class="section">
+        <div class="transition-text">⚠️ 接上一页：你已经找到了 Theme。现在，看看常见的错误，避免踩坑。</div>
+        <h2>▍ 1.4 Common Mistakes to Avoid</h2>
+        <p>For each statement, decide whether it is <strong>Correct</strong> or <strong>Wrong</strong> as a theme statement. Then check your answers.</p>
+
+        <div class="task-box">
+          <label>📝 Task: Identify Correct vs. Wrong Theme Statements</label>
+          <table class="fill-table" id="mistakeTable">
+            <thead><tr><th style="width:55%;">Statement</th><th style="width:45%;">Correct or Wrong?</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>“The theme is thinking.”</td>
+                <td><select class="mistake-select" data-correct="wrong">
+                  <option value="">— Select —</option>
+                  <option value="correct">✅ Correct</option>
+                  <option value="wrong">❌ Wrong</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>“The theme is that most people don't think.”</td>
+                <td><select class="mistake-select" data-correct="wrong">
+                  <option value="">— Select —</option>
+                  <option value="correct">✅ Correct</option>
+                  <option value="wrong">❌ Wrong</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>“The theme is the three grades of thinking.”</td>
+                <td><select class="mistake-select" data-correct="wrong">
+                  <option value="">— Select —</option>
+                  <option value="correct">✅ Correct</option>
+                  <option value="wrong">❌ Wrong</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>“The theme is critical thinking is important.”</td>
+                <td><select class="mistake-select" data-correct="wrong">
+                  <option value="">— Select —</option>
+                  <option value="correct">✅ Correct</option>
+                  <option value="wrong">❌ Wrong</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>“Genuine thinking vs. pseudo‑thinking.”</td>
+                <td><select class="mistake-select" data-correct="correct">
+                  <option value="">— Select —</option>
+                  <option value="correct">✅ Correct</option>
+                  <option value="wrong">❌ Wrong</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td>“The scarcity of genuine thinking.”</td>
+                <td><select class="mistake-select" data-correct="correct">
+                  <option value="">— Select —</option>
+                  <option value="correct">✅ Correct</option>
+                  <option value="wrong">❌ Wrong</option>
+                </select></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-check" id="checkMistakes">Check Answers</button>
+          <div id="feedbackMistakes" class="quiz-feedback"></div>
+        </div>
+
+        <div class="transition-text">✅ 你已经避开了常见错误。最后，做一个小自测，检验你的掌握程度。</div>
+        <div class="page-nav">
+          <button class="prev" data-prev="sec3">← Previous</button>
+          <span class="page-indicator">5 / 7</span>
+          <button class="next" data-next="sec5">Next →</button>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- 板块 1.5：Self‑Check -->
+      <!-- ======================================== -->
+      <div id="section-sec5" class="section">
+        <div class="transition-text">🧪 接上一页：现在做一个快速自测，看看你是否能准确区分 Subject / Main Idea / Theme。</div>
+        <h2>▍ 1.5 Quick Self‑Check</h2>
+
+        <div class="task-box">
+          <label>📝 Identify each statement as Subject, Main Idea, or Theme</label>
+          <div id="quiz5">
+            <div style="margin:0.6rem 0;">
+              <p style="font-weight:500;">1. “Thinking.”</p>
+              <div class="quiz-option"><input type="radio" name="q5_1" value="subject"> Subject</div>
+              <div class="quiz-option"><input type="radio" name="q5_1" value="mainidea"> Main Idea</div>
+              <div class="quiz-option"><input type="radio" name="q5_1" value="theme"> Theme</div>
+            </div>
+            <div style="margin:0.6rem 0;">
+              <p style="font-weight:500;">2. “Golding reveals that most people mistake feeling for thought, while genuine thinking is rare and demanding.”</p>
+              <div class="quiz-option"><input type="radio" name="q5_2" value="subject"> Subject</div>
+              <div class="quiz-option"><input type="radio" name="q5_2" value="mainidea"> Main Idea</div>
+              <div class="quiz-option"><input type="radio" name="q5_2" value="theme"> Theme</div>
+            </div>
+            <div style="margin:0.6rem 0;">
+              <p style="font-weight:500;">3. “Genuine thinking vs. pseudo‑thinking.”</p>
+              <div class="quiz-option"><input type="radio" name="q5_3" value="subject"> Subject</div>
+              <div class="quiz-option"><input type="radio" name="q5_3" value="mainidea"> Main Idea</div>
+              <div class="quiz-option"><input type="radio" name="q5_3" value="theme"> Theme</div>
+            </div>
+            <div style="margin:0.6rem 0;">
+              <p style="font-weight:500;">4. “The essay is about three grades of thinking.”</p>
+              <div class="quiz-option"><input type="radio" name="q5_4" value="subject"> Subject</div>
+              <div class="quiz-option"><input type="radio" name="q5_4" value="mainidea"> Main Idea</div>
+              <div class="quiz-option"><input type="radio" name="q5_4" value="theme"> Theme</div>
+            </div>
+          </div>
+          <button class="btn-check" id="checkQ5">Check All</button>
+          <div id="feedback5" class="quiz-feedback"></div>
+        </div>
+
+        <div class="transition-text">📊 你已经完成了所有学习和自测。现在查看你的整体完成报告。</div>
+        <div class="page-nav">
+          <button class="prev" data-prev="sec4">← Previous</button>
+          <span class="page-indicator">6 / 7</span>
+          <button class="next" data-next="sec6">Next →</button>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- 板块 1.6：Report -->
+      <!-- ======================================== -->
+      <div id="section-sec6" class="section">
+        <div class="transition-text">🏁 接上一页：你已经完成了所有内容。现在查看你的整体完成报告。</div>
+        <h2>▍ 1.6 Summary & Report</h2>
+
+        <div style="background:#f4faf3; border-radius:24px; padding:1.2rem 1.8rem; margin:1rem 0;">
+          <p style="font-weight:600; color:#1a4a2a;">Final Reminder</p>
+          <table style="width:100%; border-collapse:collapse; background:#f8fbf7; border-radius:12px; overflow:hidden; font-size:0.95rem; margin:0.4rem 0;">
+            <tr style="background:#dce8d5;"><th style="padding:0.3rem 0.6rem; text-align:left;">Concept</th><th style="padding:0.3rem 0.6rem; text-align:left;">Form</th><th style="padding:0.3rem 0.6rem; text-align:left;">Example</th></tr>
+            <tr><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;"><strong>Subject</strong></td><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;">A word</td><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;">“Thinking”</td></tr>
+            <tr><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;"><strong>Main Idea</strong></td><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;">A complete sentence</td><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;">“Golding reveals that most people mistake feeling for thought...”</td></tr>
+            <tr><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;"><strong>Theme</strong></td><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;">A paired noun phrase</td><td style="padding:0.2rem 0.6rem; border-top:1px solid #dce8d5;">“Genuine thinking vs. pseudo‑thinking”</td></tr>
+          </table>
+          <p style="font-style:italic; margin-top:0.4rem;">💡 <strong>Theme is a lens, not a summary.</strong> It tells you what the text is <em>about</em> at the level of human experience.</p>
+        </div>
+
+        <div style="text-align:center; margin-top:1.5rem;">
+          <button class="submit-final" id="submitFinal">📤 Submit & View Report</button>
+        </div>
+
+        <div class="page-nav">
+          <button class="prev" data-prev="sec5">← Previous</button>
+          <span class="page-indicator">7 / 7</span>
+          <button class="next" disabled>Next →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-box">
+    <button class="close-btn" id="modalClose">&times;</button>
+    <h3>📊 Theme Analysis — Completion Report</h3>
+    <div id="reportContent"></div>
+    <p style="margin-top:0.8rem; font-size:0.9rem; color:#5a7a6a;">📸 Please take a screenshot for your records.</p>
+    <button class="btn-check" id="modalCloseBtn" style="margin-top:0.5rem;">Close</button>
+    <button class="btn-reset" id="resetAllBtn" style="margin-left:0.5rem;">🔄 Reset & Redo</button>
+  </div>
+</div>
+
+<!-- Name Modal -->
+<div class="modal-overlay" id="nameModal">
+  <div class="modal-box">
+    <h3>👋 Welcome!</h3>
+    <p style="margin-bottom:0.8rem;">Please enter your <strong>full name</strong> to begin.</p>
+    <input type="text" id="nameInputModal" placeholder="Enter your full name" style="width:100%; padding:0.6rem 1rem; border-radius:40px; border:1px solid #dce8d5; font-size:1rem; margin-bottom:1rem;">
+    <button class="submit-final" id="nameConfirmBtn" style="width:100%;">Confirm</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- 姓名管理 -----
+    let studentName = '';
+
+    function showNameModal() {
+      document.getElementById('nameModal').classList.add('show');
+      document.getElementById('nameInputModal').focus();
+    }
+
+    function hideNameModal() {
+      document.getElementById('nameModal').classList.remove('show');
+    }
+
+    function setStudentName(name) {
+      studentName = name.trim();
+      document.getElementById('displayName').textContent = studentName || '(not set)';
+      if (studentName) localStorage.setItem('theme_studentName', studentName);
+      else localStorage.removeItem('theme_studentName');
+    }
+
+    function checkNameOnLoad() {
+      const saved = localStorage.getItem('theme_studentName');
+      if (saved && saved.trim() !== '') {
+        setStudentName(saved);
+        hideNameModal();
+      } else showNameModal();
+    }
+    document.getElementById('nameConfirmBtn').addEventListener('click', function() {
+      const input = document.getElementById('nameInputModal');
+      const name = input.value.trim();
+      if (name === '') { alert('Please enter your full name.'); return; }
+      setStudentName(name);
+      hideNameModal();
+    });
+    document.getElementById('nameInputModal').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') document.getElementById('nameConfirmBtn').click();
+    });
+    document.getElementById('changeNameBtn').addEventListener('click', function() {
+      const newName = prompt('Enter your full name:', studentName);
+      if (newName !== null && newName.trim() !== '') {
+        setStudentName(newName);
+        localStorage.setItem('theme_studentName', newName);
+      }
+    });
+
+    // ----- 侧边栏 -----
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const hamburger = document.getElementById('hamburgerBtn');
+
+    function toggleSidebar(show) {
+      if (show === undefined) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else if (show) {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+      } else {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+      }
+    }
+    hamburger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleSidebar();
+    });
+    overlay.addEventListener('click', function() {
+      toggleSidebar(false);
+    });
+    sidebar.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 701) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+      }
+    });
+
+    // ----- 导航 -----
+    const sections = {
+      sec0: document.getElementById('section-sec0'),
+      sec1: document.getElementById('section-sec1'),
+      sec2: document.getElementById('section-sec2'),
+      sec3: document.getElementById('section-sec3'),
+      sec4: document.getElementById('section-sec4'),
+      sec5: document.getElementById('section-sec5'),
+      sec6: document.getElementById('section-sec6')
+    };
+    const sectionIds = ['sec0', 'sec1', 'sec2', 'sec3', 'sec4', 'sec5', 'sec6'];
+    let currentIndex = 0;
+
+    function showSection(id) {
+      Object.values(sections).forEach(sec => sec.classList.remove('active'));
+      if (sections[id]) sections[id].classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      const targetBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.dataset.section === id);
+      if (targetBtn) targetBtn.classList.add('active');
+      currentIndex = sectionIds.indexOf(id);
+      updateNavButtons(id);
+      document.getElementById('content').scrollTop = 0;
+    }
+
+    function updateNavButtons(currentId) {
+      const idx = sectionIds.indexOf(currentId);
+      const prevBtn = document.querySelector(`.section.active .prev`);
+      const nextBtn = document.querySelector(`.section.active .next`);
+      if (prevBtn) {
+        prevBtn.disabled = (idx <= 0);
+        if (!prevBtn.disabled) prevBtn.dataset.prev = sectionIds[idx - 1];
+      }
+      if (nextBtn) {
+        nextBtn.disabled = (idx >= sectionIds.length - 1);
+        if (!nextBtn.disabled) nextBtn.dataset.next = sectionIds[idx + 1];
+      }
+      const indicator = document.querySelector(`.section.active .page-indicator`);
+      if (indicator) indicator.textContent = `${idx + 1} / ${sectionIds.length}`;
+    }
+
+    document.addEventListener('click', function(e) {
+      const target = e.target.closest('.prev, .next');
+      if (!target || target.disabled) return;
+      let targetId = target.classList.contains('prev') ? target.dataset.prev : target.dataset.next;
+      if (targetId && sections[targetId]) {
+        showSection(targetId);
+        if (window.innerWidth < 701) toggleSidebar(false);
+      }
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const id = this.dataset.section;
+        if (id && sections[id]) {
+          showSection(id);
+          if (window.innerWidth < 701) toggleSidebar(false);
+        }
+      });
+    });
+    showSection('sec0');
+
+    // ----- 通用：检查表格填空 -----
+    function checkTable(selectClass, feedbackId, label) {
+      const selects = document.querySelectorAll(`.${selectClass}`);
+      let allCorrect = true;
+      let total = selects.length;
+      let correctCount = 0;
+      selects.forEach(sel => {
+        const selected = sel.value;
+        const correct = sel.dataset.correct;
+        const parent = sel.closest('tr');
+        const isCorrect = selected === correct;
+        if (isCorrect) { correctCount++; } else { allCorrect = false; }
+        if (parent) {
+          parent.classList.remove('table-correct', 'table-wrong');
+          if (selected && selected !== '') {
+            parent.classList.add(isCorrect ? 'table-correct' : 'table-wrong');
+          }
+        }
+      });
+      const feedback = document.getElementById(feedbackId);
+      if (allCorrect && total === correctCount) {
+        feedback.innerHTML = `<div class="correct-msg">✅ Perfect! All ${total} items correct.</div>`;
+      } else {
+        feedback.innerHTML =
+          `<div class="wrong-msg">❌ ${correctCount} / ${total} correct. Review the rows marked in red and try again.</div>`;
+      }
+      feedback.classList.add('show');
+    }
+
+    // ----- Opposition Table -----
+    document.getElementById('checkOpposition').addEventListener('click', function() {
+      checkTable('oppo-select', 'feedbackOpposition', 'Opposition');
+    });
+
+    // ----- Contrast Table -----
+    document.getElementById('checkContrast').addEventListener('click', function() {
+      checkTable('contrast-select', 'feedbackContrast', 'Contrast');
+    });
+
+    // ----- Section Table -----
+    document.getElementById('checkSection').addEventListener('click', function() {
+      checkTable('section-select', 'feedbackSection', 'Section');
+    });
+
+    // ----- Mistakes Table -----
+    document.getElementById('checkMistakes').addEventListener('click', function() {
+      const selects = document.querySelectorAll('.mistake-select');
+      let allCorrect = true;
+      let total = selects.length;
+      let correctCount = 0;
+      selects.forEach(sel => {
+        const selected = sel.value;
+        const correct = sel.dataset.correct;
+        const parent = sel.closest('tr');
+        const isCorrect = selected === correct;
+        if (isCorrect) { correctCount++; } else { allCorrect = false; }
+        if (parent) {
+          parent.classList.remove('table-correct', 'table-wrong');
+          if (selected && selected !== '') {
+            parent.classList.add(isCorrect ? 'table-correct' : 'table-wrong');
+          }
+        }
+      });
+      const feedback = document.getElementById('feedbackMistakes');
+      if (allCorrect && total === correctCount) {
+        feedback.innerHTML = `<div class="correct-msg">✅ Excellent! All ${total} statements correctly identified.</div>`;
+      } else {
+        feedback.innerHTML =
+          `<div class="wrong-msg">❌ ${correctCount} / ${total} correct. Review the rows marked in red and try again.</div>`;
+      }
+      feedback.classList.add('show');
+    });
+
+    // ----- Quiz 0: Radio (single) -----
+    function checkRadio(quizId, feedbackId, correctMap) {
+      const feedback = document.getElementById(feedbackId);
+      let allCorrect = true;
+      let html = '';
+      const questionNames = Object.keys(correctMap);
+      questionNames.forEach(name => {
+        const selected = document.querySelector(`input[name="${name}"]:checked`);
+        const userVal = selected ? selected.value : '';
+        const correctVal = correctMap[name];
+        const isCorrect = userVal === correctVal;
+        if (!isCorrect) allCorrect = false;
+        const label = name.replace('q', '');
+        html +=
+          `<div style="display:flex;justify-content:space-between;padding:0.1rem 0;font-size:0.9rem;border-bottom:1px solid #eee;"><span>Q${label}</span><span>${isCorrect ? '✅' : '❌'} ${userVal ? userVal : 'Not answered'} ${isCorrect ? '' : '(Correct: ' + correctVal + ')'}</span></div>`;
+      });
+      if (allCorrect) {
+        html = `<div class="correct-msg">✅ All correct!</div>` + html;
+      } else {
+        html = `<div class="wrong-msg">❌ Some answers are incorrect. Review and try again.</div>` + html;
+      }
+      feedback.innerHTML = html;
+      feedback.classList.add('show');
+    }
+
+    document.getElementById('checkQ0').addEventListener('click', function() {
+      const selected = document.querySelector('input[name="q0"]:checked');
+      if (!selected) {
+        document.getElementById('feedback0').innerHTML = '<span class="wrong-msg">⚠️ Please select an answer first.</span>';
+        document.getElementById('feedback0').classList.add('show');
+        return;
+      }
+      checkRadio('quiz0', 'feedback0', { 'q0': 'theme' });
+    });
+
+    document.getElementById('checkQ1').addEventListener('click', function() {
+      const selected = document.querySelector('input[name="q1"]:checked');
+      if (!selected) {
+        document.getElementById('feedback1').innerHTML = '<span class="wrong-msg">⚠️ Please select an answer first.</span>';
+        document.getElementById('feedback1').classList.add('show');
+        return;
+      }
+      checkRadio('quiz1', 'feedback1', { 'q1': 'b' });
+    });
+
+    document.getElementById('checkQ2').addEventListener('click', function() {
+      const selected = document.querySelector('input[name="q2"]:checked');
+      if (!selected) {
+        document.getElementById('feedback2').innerHTML = '<span class="wrong-msg">⚠️ Please select an answer first.</span>';
+        document.getElementById('feedback2').classList.add('show');
+        return;
+      }
+      checkRadio('quiz2', 'feedback2', { 'q2': 'b' });
+    });
+
+    // ----- Quiz 5: 多题 -----
+    document.getElementById('checkQ5').addEventListener('click', function() {
+      const feedback = document.getElementById('feedback5');
+      const correctMap = {
+        'q5_1': 'subject',
+        'q5_2': 'mainidea',
+        'q5_3': 'theme',
+        'q5_4': 'subject'
+      };
+      let allCorrect = true;
+      let html = '';
+      Object.keys(correctMap).forEach(name => {
+        const selected = document.querySelector(`input[name="${name}"]:checked`);
+        const userVal = selected ? selected.value : '';
+        const correctVal = correctMap[name];
+        const isCorrect = userVal === correctVal;
+        if (!isCorrect) allCorrect = false;
+        const label = name.replace('q5_', '');
+        html +=
+          `<div style="display:flex;justify-content:space-between;padding:0.1rem 0;font-size:0.9rem;border-bottom:1px solid #eee;"><span>${label}. ${name === 'q5_1' ? '"Thinking."' : name === 'q5_2' ? '"Golding reveals..."' : name === 'q5_3' ? '"Genuine thinking vs..."' : '"The essay is about three grades."'}</span><span>${isCorrect ? '✅' : '❌'} ${userVal || 'Not answered'} ${isCorrect ? '' : '(Correct: ' + correctVal + ')'}</span></div>`;
+      });
+      if (allCorrect) {
+        html = `<div class="correct-msg">✅ All correct! Well done.</div>` + html;
+      } else {
+        html = `<div class="wrong-msg">❌ Some answers are incorrect. Review and try again.</div>` + html;
+      }
+      feedback.innerHTML = html;
+      feedback.classList.add('show');
+    });
+
+    // ----- 重置 -----
+    function resetAllTasks() {
+      document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+      document.querySelectorAll('select').forEach(el => el.value = '');
+      document.querySelectorAll('.quiz-feedback').forEach(el => {
+        el.classList.remove('show');
+        el.innerHTML = '';
+      });
+      document.querySelectorAll('tr').forEach(el => {
+        el.classList.remove('table-correct', 'table-wrong');
+      });
+    }
+    document.getElementById('resetAllBtn').addEventListener('click', function() {
+      if (confirm('Clear all your answers?')) {
+        resetAllTasks();
+        document.getElementById('reportModal').classList.remove('show');
+      }
+    });
+
+    // ----- 提交报告 -----
+    document.getElementById('submitFinal').addEventListener('click', function() {
+      if (!studentName || studentName.trim() === '') {
+        alert('Please enter your name first.');
+        document.getElementById('changeNameBtn').click();
+        return;
+      }
+
+      // 统计各任务完成情况
+      const taskNames = [
+        'Quiz 1.0: Three Concepts',
+        'Quiz 1.1: Subject',
+        'Quiz 1.2: Main Idea',
+        'Task 1.3a: Opposition Match',
+        'Task 1.3b: Contrast Table',
+        'Task 1.3c: Section Analysis',
+        'Task 1.4: Common Mistakes',
+        'Quiz 1.5: Self‑Check'
+      ];
+      const feedbackIds = ['feedback0', 'feedback1', 'feedback2', 'feedbackOpposition', 'feedbackContrast',
+        'feedbackSection', 'feedbackMistakes', 'feedback5'
+      ];
+      let doneCount = 0;
+      let reportHtml = `<p><strong>Student:</strong> ${studentName}</p><hr>`;
+      feedbackIds.forEach((id, index) => {
+        const el = document.getElementById(id);
+        const done = el && el.classList.contains('show');
+        if (done) doneCount++;
+        const status = done ? '<span class="status done">✅ Attempted</span>' :
+          '<span class="status pending">⏳ Not attempted</span>';
+        reportHtml += `<div class="report-item"><span>${taskNames[index]}</span> ${status}</div>`;
+      });
+      reportHtml += `<hr><p><strong>Tasks completed:</strong> ${doneCount} / ${feedbackIds.length}</p>`;
+      reportHtml +=
+        `<p style="margin-top:0.8rem; font-size:0.9rem; color:#5a7a6a;">📸 Please take a screenshot for your records.</p>`;
+      document.getElementById('reportContent').innerHTML = reportHtml;
+      document.getElementById('reportModal').classList.add('show');
+    });
+
+    // Modal 关闭
+    function closeModal() {
+      document.getElementById('reportModal').classList.remove('show');
+    }
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+    document.getElementById('reportModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    checkNameOnLoad();
+  })();
+</script>
+</body>
+</html>
